@@ -983,6 +983,8 @@ function getRandomSocialProof(listing) {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded fired - v18');
+
     renderListings('listings-main', mockListings);
     renderListings('listings-package', mockListings.filter(l => l.status === 'active'));
     renderListings('listings-wallet', mockListings.filter(l => l.status === 'active'));
@@ -994,7 +996,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateProgressBar();
     updateWalletDisplay();
     renderSmartSuggestions();
+
+    // Render recommendations with explicit call
+    console.log('Calling renderRecommendations...');
     renderRecommendations();
+    console.log('renderRecommendations completed');
+
     updatePackageHealthBar();
 });
 
