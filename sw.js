@@ -1,4 +1,4 @@
-const CACHE_NAME = 'listings-prototype-v6';
+const CACHE_NAME = 'listings-prototype-v7';
 const urlsToCache = [
     '/',
     '/index.html',

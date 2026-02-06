@@ -2067,6 +2067,7 @@ html, body {
 .scenario-card {
     display: flex;
     align-items: center;
+    gap: 12px;
     padding: 16px;
     background: #FFFFFF;
     border-radius: 16px;
@@ -2076,6 +2077,17 @@ html, body {
 
 .scenario-card:active {
     background: #F9F9F9;
+}
+
+.scenario-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #F2F3F7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .scenario-content {
