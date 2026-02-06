@@ -1064,12 +1064,18 @@ function updateAllListings() {
 function updateSelectionUI() {
     const count = state.selectedListings.size;
 
-    // Update promotion button visibility
-    const promotionBtn = document.getElementById('promotion-btn');
-    if (promotionBtn) {
-        promotionBtn.style.display = count > 0 ? 'block' : 'none';
+    // Update selection actions bar visibility (for My Listings screen)
+    const selectionActionsBar = document.getElementById('selection-actions-bar');
+    if (selectionActionsBar) {
+        selectionActionsBar.style.display = count > 0 ? 'flex' : 'none';
         const countSpan = document.getElementById('selected-count');
         if (countSpan) countSpan.textContent = count;
+    }
+
+    // Hide old promotion button if exists
+    const promotionBtn = document.getElementById('promotion-btn');
+    if (promotionBtn) {
+        promotionBtn.style.display = 'none';
     }
 
     // Update package apply count
@@ -1481,6 +1487,97 @@ document.addEventListener('click', (e) => {
         e.target.style.display = 'none';
     }
 });
+
+// Hide selected ads
+function hideSelectedAds() {
+    const count = state.selectedListings.size;
+    if (count === 0) return;
+
+    // Update listing status to hidden (mock action)
+    state.selectedListings.forEach(id => {
+        const listing = mockListings.find(l => l.id === id);
+        if (listing) {
+            listing.status = 'hidden';
+        }
+    });
+
+    // Clear selection
+    state.selectedListings.clear();
+    updateSelectionUI();
+    updateAllListings();
+
+    // Show success toast
+    showActionToast(`${count} ad${count > 1 ? 's' : ''} hidden`);
+}
+
+// Open delete confirmation modal
+function openDeleteConfirmModal() {
+    const count = state.selectedListings.size;
+    if (count === 0) return;
+
+    // Update modal text with count
+    const modalText = document.querySelector('.delete-modal-text');
+    if (modalText) {
+        modalText.textContent = `The ad${count > 1 ? 's' : ''} will disappear from your account. This action cannot be undone.`;
+    }
+
+    document.getElementById('delete-confirm-modal').style.display = 'flex';
+}
+
+// Close delete confirmation modal
+function closeDeleteConfirmModal() {
+    document.getElementById('delete-confirm-modal').style.display = 'none';
+}
+
+// Confirm delete ads
+function confirmDeleteAds() {
+    const count = state.selectedListings.size;
+    if (count === 0) return;
+
+    // Remove listings from mock data
+    const idsToDelete = Array.from(state.selectedListings);
+    idsToDelete.forEach(id => {
+        const index = mockListings.findIndex(l => l.id === id);
+        if (index > -1) {
+            mockListings.splice(index, 1);
+        }
+    });
+
+    // Close modal
+    closeDeleteConfirmModal();
+
+    // Clear selection
+    state.selectedListings.clear();
+    updateSelectionUI();
+    updateAllListings();
+
+    // Show success toast
+    showActionToast(`${count} ad${count > 1 ? 's' : ''} deleted`);
+}
+
+// Show action toast notification
+function showActionToast(message) {
+    // Remove existing toast if any
+    const existingToast = document.querySelector('.action-toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'bundle-toast action-toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
 
 // Service Worker Registration
 if ('serviceWorker' in navigator) {
