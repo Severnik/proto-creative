@@ -1436,6 +1436,319 @@ html, body {
     line-height: 16px;
 }
 
+/* ========================================
+   Confirmation Dialog Modal
+   ======================================== */
+
+.confirm-modal {
+    max-height: 280px;
+    border-radius: 16px 16px 0 0;
+}
+
+.confirm-modal-body {
+    padding: 24px 20px;
+}
+
+.confirm-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1D2023;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.confirm-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #F2F3F7;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.confirm-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.confirm-label {
+    font-size: 14px;
+    color: #626C77;
+}
+
+.confirm-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1D2023;
+}
+
+.confirm-modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid #E8E8E8;
+}
+
+.confirm-modal-footer .secondary-btn,
+.confirm-modal-footer .primary-btn {
+    flex: 1;
+    height: 48px;
+}
+
+.confirm-btn {
+    background: #136938 !important;
+}
+
+.confirm-btn:active {
+    background: #0d4d28 !important;
+}
+
+/* ========================================
+   Progress Bar Section (Figma Style)
+   ======================================== */
+
+.progress-section {
+    background: #FFFFFF;
+    padding: 8px 16px 16px;
+    border-radius: 16px;
+    margin: 0 16px;
+}
+
+.progress-info {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.progress-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #136938;
+}
+
+.progress-count {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #136938;
+}
+
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    height: 4px;
+}
+
+.progress-bar-fill {
+    height: 4px;
+    background: #136938;
+    border-radius: 8px;
+    transition: width 0.3s ease;
+    flex-shrink: 0;
+}
+
+.progress-bar-track {
+    flex: 1;
+    height: 4px;
+    background: #E2E5EB;
+    border-radius: 8px;
+}
+
+.progress-bar-stop {
+    position: absolute;
+    right: 0;
+    width: 4px;
+    height: 4px;
+    background: #136938;
+    border-radius: 50%;
+}
+
+/* Limit warning state */
+.progress-section.limit-warning .progress-label,
+.progress-section.limit-warning .progress-count {
+    color: #FFAB00;
+}
+
+.progress-section.limit-warning .progress-bar-fill,
+.progress-section.limit-warning .progress-bar-stop {
+    background: #FFAB00;
+}
+
+/* Limit reached state */
+.progress-section.limit-reached .progress-label,
+.progress-section.limit-reached .progress-count {
+    color: #B42525;
+}
+
+.progress-section.limit-reached .progress-bar-fill,
+.progress-section.limit-reached .progress-bar-stop {
+    background: #B42525;
+}
+
+/* ========================================
+   Wallet Balance Section
+   ======================================== */
+
+.wallet-balance-section {
+    background: #FFFFFF;
+    padding: 12px 16px;
+    margin: 0 16px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.wallet-balance-row,
+.wallet-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wallet-balance-label {
+    font-size: 14px;
+    color: #626C77;
+}
+
+.wallet-balance-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #136938;
+}
+
+.wallet-total-label {
+    font-size: 14px;
+    color: #626C77;
+}
+
+.wallet-total-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1D2023;
+}
+
+/* Insufficient funds warning */
+.wallet-balance-section.insufficient .wallet-total-value {
+    color: #B42525;
+}
+
+/* ========================================
+   Snackbar with Undo
+   ======================================== */
+
+.snackbar {
+    justify-content: space-between;
+}
+
+.snackbar-undo {
+    background: transparent;
+    border: none;
+    color: #0066FF;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    margin-left: 12px;
+}
+
+.snackbar-undo:active {
+    opacity: 0.7;
+}
+
+/* ========================================
+   Success Animation for Cards
+   ======================================== */
+
+.listing-card.success-applied {
+    position: relative;
+    animation: successPulse 0.6s ease;
+}
+
+.listing-card.success-applied::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: #136938;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: checkmarkAppear 0.4s ease 0.2s both;
+}
+
+.listing-card.success-applied::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    z-index: 1;
+    animation: checkmarkAppear 0.4s ease 0.2s both;
+}
+
+@keyframes successPulse {
+    0% { background: #FFFFFF; }
+    30% { background: rgba(19, 105, 56, 0.1); }
+    100% { background: #FFFFFF; }
+}
+
+@keyframes checkmarkAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(45deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(45deg);
+    }
+}
+
+/* Badge appear animation */
+.badge.animate-in {
+    animation: badgeAppear 0.4s ease;
+}
+
+@keyframes badgeAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ========================================
+   Disabled state for over-limit
+   ======================================== */
+
+.listing-card.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.listing-card.disabled .checkbox {
+    cursor: not-allowed;
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
     width: 4px;

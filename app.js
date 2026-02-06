@@ -115,6 +115,20 @@ const mockListings = [
     }
 ];
 
+// Package configuration
+const packageConfig = {
+    name: 'VIP for 5 days',
+    totalSlots: 5,
+    usedSlots: 0,
+    pricePerAd: 2.50
+};
+
+// Wallet configuration
+const walletConfig = {
+    balance: 25.00,
+    pricePerAd: 2.50
+};
+
 // State
 let state = {
     currentScreen: 'screen-my-listings',
@@ -128,7 +142,9 @@ let state = {
         priceFrom: '',
         priceTo: ''
     },
-    sort: 'date-desc'
+    sort: 'date-desc',
+    pendingPromotionType: null,
+    lastAppliedListings: []
 };
 
 // Initialize
@@ -141,6 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSelectAllHandlers();
     updateSortDisplay();
     updateDropdownSelections();
+    updateProgressBar();
+    updateWalletDisplay();
 });
 
 // Navigation
@@ -317,9 +335,65 @@ function updateSelectionUI() {
     const packageCount = document.getElementById('package-selected-count');
     if (packageCount) packageCount.textContent = count;
 
-    // Update wallet apply count
+    // Update wallet apply count and total
     const walletCount = document.getElementById('wallet-selected-count');
     if (walletCount) walletCount.textContent = count;
+
+    const walletTotal = document.getElementById('wallet-total');
+    if (walletTotal) walletTotal.textContent = (count * walletConfig.pricePerAd).toFixed(2);
+
+    // Update progress bar
+    updateProgressBar();
+
+    // Update wallet display
+    updateWalletDisplay();
+}
+
+// Update progress bar
+function updateProgressBar() {
+    const count = state.selectedListings.size;
+    const available = packageConfig.totalSlots - packageConfig.usedSlots;
+    const newUsed = packageConfig.usedSlots + count;
+    const percentage = (newUsed / packageConfig.totalSlots) * 100;
+
+    const progressSection = document.getElementById('package-progress-section');
+    const progressLabel = document.getElementById('progress-label');
+    const progressCount = document.getElementById('progress-count');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+
+    if (!progressSection) return;
+
+    // Update text
+    if (progressCount) progressCount.textContent = `${newUsed}/${packageConfig.totalSlots}`;
+
+    // Update bar width
+    if (progressBarFill) progressBarFill.style.width = `${Math.min(percentage, 100)}%`;
+
+    // Update state classes
+    progressSection.classList.remove('limit-warning', 'limit-reached');
+
+    if (count > available) {
+        progressSection.classList.add('limit-reached');
+    } else if (newUsed >= packageConfig.totalSlots - 1) {
+        progressSection.classList.add('limit-warning');
+    }
+}
+
+// Update wallet display
+function updateWalletDisplay() {
+    const count = state.selectedListings.size;
+    const totalCost = count * walletConfig.pricePerAd;
+
+    const walletTotalDisplay = document.getElementById('wallet-total-display');
+    const walletBalanceSection = document.querySelector('.wallet-balance-section');
+
+    if (walletTotalDisplay) {
+        walletTotalDisplay.textContent = `€${totalCost.toFixed(2)}`;
+    }
+
+    if (walletBalanceSection) {
+        walletBalanceSection.classList.toggle('insufficient', totalCost > walletConfig.balance);
+    }
 }
 
 // Setup select all handlers
@@ -537,22 +611,127 @@ function updateSortDisplay() {
     }
 }
 
-// Apply Promotion
+// Apply Promotion - now shows confirmation dialog
 function applyPromotion(type) {
     const count = state.selectedListings.size;
     if (count === 0) return;
 
-    // Navigate to success screen
-    navigateTo('screen-success');
+    state.pendingPromotionType = type;
 
-    // Update snackbar message
-    const snackbar = document.getElementById('snackbar');
-    if (snackbar) {
-        snackbar.querySelector('span').textContent = `VIP applied to ${count} ads`;
+    // Update confirmation dialog
+    const confirmCount = document.getElementById('confirm-count');
+    const confirmPackage = document.getElementById('confirm-package');
+    const confirmRemaining = document.getElementById('confirm-remaining');
+
+    if (confirmCount) confirmCount.textContent = count;
+    if (confirmPackage) confirmPackage.textContent = packageConfig.name;
+
+    const remaining = packageConfig.totalSlots - packageConfig.usedSlots - count;
+    if (confirmRemaining) confirmRemaining.textContent = `${Math.max(0, remaining)}/${packageConfig.totalSlots}`;
+
+    // Show confirmation modal
+    document.getElementById('confirm-modal').style.display = 'flex';
+}
+
+// Close confirmation modal
+function closeConfirmModal() {
+    document.getElementById('confirm-modal').style.display = 'none';
+    state.pendingPromotionType = null;
+}
+
+// Confirm and apply promotion
+function confirmApplyPromotion() {
+    const count = state.selectedListings.size;
+    const type = state.pendingPromotionType;
+
+    // Store applied listings for undo
+    state.lastAppliedListings = Array.from(state.selectedListings);
+
+    // Update package usage
+    if (type === 'package') {
+        packageConfig.usedSlots += count;
     }
 
-    // Clear selection
-    state.selectedListings.clear();
+    // Close confirmation modal
+    closeConfirmModal();
+
+    // Show success animation on selected cards
+    state.selectedListings.forEach(id => {
+        const card = document.querySelector(`.listing-card[data-id="${id}"]`);
+        if (card) {
+            card.classList.add('success-applied');
+            // Add VIP badge with animation
+            const badgesContainer = card.querySelector('.listing-badges');
+            if (badgesContainer && !badgesContainer.querySelector('.badge.vip')) {
+                const vipBadge = document.createElement('span');
+                vipBadge.className = 'badge vip animate-in';
+                vipBadge.textContent = 'VIP';
+                badgesContainer.prepend(vipBadge);
+            }
+        }
+    });
+
+    // Navigate to success screen after animation
+    setTimeout(() => {
+        navigateTo('screen-success');
+
+        // Update snackbar message
+        const snackbarText = document.getElementById('snackbar-text');
+        if (snackbarText) {
+            snackbarText.textContent = `VIP applied to ${count} ads`;
+        }
+
+        // Show snackbar
+        const snackbar = document.getElementById('snackbar');
+        if (snackbar) {
+            snackbar.style.animation = 'none';
+            snackbar.offsetHeight; // Trigger reflow
+            snackbar.style.animation = 'slideUp 0.3s ease-out';
+        }
+
+        // Clear selection
+        state.selectedListings.clear();
+        updateSelectionUI();
+    }, 800);
+}
+
+// Undo promotion
+function undoPromotion() {
+    if (state.lastAppliedListings.length === 0) return;
+
+    const count = state.lastAppliedListings.length;
+
+    // Restore package usage
+    packageConfig.usedSlots = Math.max(0, packageConfig.usedSlots - count);
+
+    // Remove success animation and VIP badges from cards
+    state.lastAppliedListings.forEach(id => {
+        const card = document.querySelector(`.listing-card[data-id="${id}"]`);
+        if (card) {
+            card.classList.remove('success-applied');
+            const animatedBadge = card.querySelector('.badge.vip.animate-in');
+            if (animatedBadge) {
+                animatedBadge.remove();
+            }
+        }
+    });
+
+    // Update snackbar
+    const snackbarText = document.getElementById('snackbar-text');
+    if (snackbarText) {
+        snackbarText.textContent = `Promotion undone for ${count} ads`;
+    }
+
+    // Clear last applied
+    state.lastAppliedListings = [];
+
+    // Hide snackbar after delay
+    setTimeout(() => {
+        const snackbar = document.getElementById('snackbar');
+        if (snackbar) {
+            snackbar.style.animation = 'slideUp 0.3s ease-out reverse';
+        }
+    }, 2000);
 }
 
 // Close modals on overlay click
