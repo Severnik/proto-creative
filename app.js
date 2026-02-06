@@ -741,7 +741,10 @@ function renderSmartSuggestions() {
 function renderRecommendations() {
     const container = document.getElementById('recommendations-list');
     const section = document.getElementById('recommendations-section');
-    if (!container || !section) return;
+    if (!container || !section) {
+        console.log('Recommendations: container or section not found');
+        return;
+    }
 
     // Get listings that would benefit from promotion
     const recommendations = [];
@@ -751,15 +754,17 @@ function renderRecommendations() {
         .filter(l => l.status === 'active' && !l.hasVip && !l.hasTop)
         .sort((a, b) => b.views - a.views);
 
+    console.log('Recommendations: found', noPromoListings.length, 'listings without promo');
+
     // Add top 3 recommendations with reasons
     noPromoListings.slice(0, 3).forEach((listing, idx) => {
         let reason, metric, metricLabel;
 
-        if (listing.views > 200) {
+        if (listing.views > 150) {
             reason = "Много просмотров — VIP ускорит продажу";
             metric = listing.views;
             metricLabel = "просмотров";
-        } else if (listing.favorites > 10) {
+        } else if (listing.favorites > 5) {
             reason = "Высокий интерес покупателей";
             metric = listing.favorites;
             metricLabel = "в избранном";
@@ -781,6 +786,8 @@ function renderRecommendations() {
             icon: idx === 0 ? 'eye' : (idx === 1 ? 'heart' : 'trending')
         });
     });
+
+    console.log('Recommendations: generated', recommendations.length, 'cards');
 
     if (recommendations.length === 0) {
         section.style.display = 'none';
