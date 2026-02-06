@@ -642,6 +642,240 @@ let state = {
     lastAppliedListings: []
 };
 
+// Social proof messages for different listing types
+const socialProofMessages = [
+    { text: "Похожий продался за 3 дня с VIP", type: "success", icon: "🎉" },
+    { text: "92% продавцов используют TOP", type: "info", icon: "📊" },
+    { text: "+280% просмотров с VIP", type: "success", icon: "📈" },
+    { text: "В топе поиска последние 24ч", type: "info", icon: "🔥" },
+    { text: "5 человек смотрят прямо сейчас", type: "warning", icon: "👀" },
+    { text: "Высокий спрос в этой категории", type: "success", icon: "💎" }
+];
+
+// Generate smart suggestions based on listings data
+function generateSmartSuggestions() {
+    const suggestions = [];
+
+    // Find most viewed without VIP
+    const mostViewed = mockListings
+        .filter(l => l.status === 'active' && !l.hasVip)
+        .sort((a, b) => b.views - a.views)
+        .slice(0, 1)[0];
+
+    if (mostViewed) {
+        suggestions.push({
+            listing: mostViewed,
+            reason: `${mostViewed.views} просмотров — VIP увеличит на 40%`,
+            icon: "📈",
+            action: "Добавить VIP"
+        });
+    }
+
+    // Find premium cars without promotion
+    const premiumCar = mockListings
+        .find(l => l.status === 'active' && l.price > 80000 && !l.hasVip && !l.hasTop && l.category === 'motors');
+
+    if (premiumCar) {
+        suggestions.push({
+            listing: premiumCar,
+            reason: "Премиум авто — TOP выделит среди конкурентов",
+            icon: "💎",
+            action: "Добавить TOP"
+        });
+    }
+
+    // Find listings with high favorites but no VIP
+    const highFavorites = mockListings
+        .filter(l => l.status === 'active' && l.favorites > 20 && !l.hasVip)
+        .sort((a, b) => b.favorites - a.favorites)
+        .slice(0, 1)[0];
+
+    if (highFavorites) {
+        suggestions.push({
+            listing: highFavorites,
+            reason: `${highFavorites.favorites} в избранном — горячий интерес!`,
+            icon: "❤️",
+            action: "Продвинуть"
+        });
+    }
+
+    return suggestions;
+}
+
+// Render smart suggestions
+function renderSmartSuggestions() {
+    const container = document.getElementById('suggestions-carousel');
+    if (!container) return;
+
+    const suggestions = generateSmartSuggestions();
+
+    if (suggestions.length === 0) {
+        document.getElementById('smart-suggestions').style.display = 'none';
+        return;
+    }
+
+    container.innerHTML = suggestions.map(s => `
+        <div class="suggestion-card" onclick="applySuggestion(${s.listing.id})">
+            <div class="suggestion-header">
+                <img src="${s.listing.image}" alt="${s.listing.title}" class="suggestion-image">
+                <div class="suggestion-info">
+                    <div class="suggestion-title">${s.listing.title}</div>
+                    <div class="suggestion-stats">
+                        <span>👁 ${s.listing.views}</span>
+                        <span>❤️ ${s.listing.favorites}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="suggestion-reason">
+                <span class="reason-icon">${s.icon}</span>
+                <span class="reason-text">${s.reason}</span>
+            </div>
+            <div class="suggestion-action">
+                <button class="suggestion-btn">${s.action}</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Apply suggestion (quick VIP)
+function applySuggestion(listingId) {
+    state.selectedListings.clear();
+    state.selectedListings.add(listingId);
+    updateSelectionUI();
+    navigateTo('screen-package-apply');
+
+    // Auto-scroll to the listing
+    setTimeout(() => {
+        const card = document.querySelector(`#listings-package .listing-card[data-id="${listingId}"]`);
+        if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.classList.add('highlight');
+            setTimeout(() => card.classList.remove('highlight'), 2000);
+        }
+    }, 300);
+}
+
+// Apply bundle strategy
+function applyBundle(bundleType) {
+    state.selectedListings.clear();
+
+    let selectedIds = [];
+
+    switch (bundleType) {
+        case 'fast-sale':
+            // Top 3 most viewed active listings without VIP
+            selectedIds = mockListings
+                .filter(l => l.status === 'active' && !l.hasVip)
+                .sort((a, b) => b.views - a.views)
+                .slice(0, 3)
+                .map(l => l.id);
+            break;
+
+        case 'premium':
+            // All cars over €50k without TOP
+            selectedIds = mockListings
+                .filter(l => l.status === 'active' && l.category === 'motors' && l.price > 50000 && !l.hasTop)
+                .map(l => l.id);
+            break;
+
+        case 'refresh':
+            // Listings older than 7 days
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            selectedIds = mockListings
+                .filter(l => l.status === 'active' && l.date < sevenDaysAgo)
+                .map(l => l.id);
+            break;
+    }
+
+    selectedIds.forEach(id => state.selectedListings.add(id));
+    updateSelectionUI();
+
+    // Navigate to appropriate screen
+    navigateTo('screen-package-apply');
+
+    // Show toast with bundle info
+    showBundleToast(bundleType, selectedIds.length);
+}
+
+// Show bundle applied toast
+function showBundleToast(bundleType, count) {
+    const messages = {
+        'fast-sale': `🔥 Выбрано ${count} самых просматриваемых`,
+        'premium': `💎 Выбрано ${count} премиум объявлений`,
+        'refresh': `🔄 Выбрано ${count} объявлений для обновления`
+    };
+
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'bundle-toast';
+    toast.textContent = messages[bundleType];
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Update package health bar
+function updatePackageHealthBar() {
+    const remaining = packageConfig.totalSlots - packageConfig.usedSlots;
+    const segments = document.querySelectorAll('.battery-segment');
+    const batteryCount = document.getElementById('battery-count');
+
+    if (batteryCount) {
+        batteryCount.textContent = `${remaining}/${packageConfig.totalSlots}`;
+    }
+
+    segments.forEach((seg, index) => {
+        seg.classList.remove('filled', 'warning', 'critical');
+
+        if (index < remaining) {
+            if (remaining <= 1) {
+                seg.classList.add('critical');
+            } else if (remaining <= 2) {
+                seg.classList.add('warning');
+            } else {
+                seg.classList.add('filled');
+            }
+        }
+    });
+
+    // Update tip based on remaining
+    const healthTip = document.getElementById('health-tip');
+    if (healthTip) {
+        if (remaining <= 1) {
+            healthTip.innerHTML = `
+                <span class="tip-icon">⚠️</span>
+                <span class="tip-text" style="color: #B42525;">Остался последний слот!</span>
+            `;
+        } else if (remaining <= 2) {
+            healthTip.innerHTML = `
+                <span class="tip-icon">💡</span>
+                <span class="tip-text">Используйте на самые важные</span>
+            `;
+        }
+    }
+}
+
+// Get random social proof for a listing
+function getRandomSocialProof(listing) {
+    // Only show for some listings to not overwhelm
+    if (Math.random() > 0.4) return null;
+
+    // Higher chance for popular listings
+    if (listing.views > 300 || listing.favorites > 20) {
+        return socialProofMessages[Math.floor(Math.random() * socialProofMessages.length)];
+    }
+
+    return socialProofMessages[Math.floor(Math.random() * 3)];
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     renderListings('listings-main', mockListings);
@@ -654,6 +888,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDropdownSelections();
     updateProgressBar();
     updateWalletDisplay();
+    renderSmartSuggestions();
+    updatePackageHealthBar();
 });
 
 // Navigation
@@ -700,6 +936,15 @@ function renderListings(containerId, listings) {
         if (listing.hasVip) badgesHtml.push('<span class="badge vip">VIP</span>');
         if (listing.hasTop) badgesHtml.push('<span class="badge top">TOP</span>');
 
+        // Get social proof for this listing (only for listings without promotions)
+        const socialProof = (!listing.hasVip && !listing.hasTop) ? getRandomSocialProof(listing) : null;
+        const socialProofHtml = socialProof ? `
+            <div class="social-proof ${socialProof.type}">
+                <span class="social-proof-icon">${socialProof.icon}</span>
+                <span class="social-proof-text">${socialProof.text}</span>
+            </div>
+        ` : '';
+
         return `
         <div class="listing-card" data-id="${listing.id}">
             <div class="listing-checkbox">
@@ -715,6 +960,7 @@ function renderListings(containerId, listings) {
                 ` : `<div class="listing-price">${listing.priceDisplay}</div>`}
                 <div class="listing-title">${listing.title}</div>
                 <div class="listing-status">${listing.statusText || `${listing.status.charAt(0).toUpperCase() + listing.status.slice(1)}`}${listing.hasVip && listing.vipText ? `<br>${listing.vipText}` : ''}</div>
+                ${socialProofHtml}
             </div>
         </div>
     `;}).join('');
