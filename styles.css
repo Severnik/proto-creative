@@ -305,14 +305,18 @@ html, body {
     height: 24px;
     border: 2px solid #949494;
     border-radius: 4px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     appearance: none;
     cursor: pointer;
     position: relative;
+    accent-color: #2C3135;
 }
 
 .checkbox:checked {
-    background: #2C3135;
-    border-color: #2C3135;
+    background: #2C3135 !important;
+    border-color: #2C3135 !important;
+    accent-color: #2C3135;
 }
 
 .checkbox:checked::after {
