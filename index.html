@@ -85,59 +85,24 @@
                     </div>
                 </div>
 
-                <!-- Smart Suggestions Section -->
-                <div class="smart-suggestions-section" id="smart-suggestions">
-                    <div class="suggestions-header">
-                        <span class="suggestions-icon">💡</span>
-                        <h3 class="suggestions-title">Рекомендуем продвинуть</h3>
-                    </div>
-                    <div class="suggestions-carousel" id="suggestions-carousel">
-                        <!-- Suggestions will be injected here -->
-                    </div>
-                </div>
-
-                <!-- Package Offer Section -->
+                <!-- Package Offer Section (Standard Figma Style) -->
                 <div class="package-offer-section" id="package-wrapper-main">
                     <h2 class="package-offer-title">Package offer</h2>
-                    <!-- Package Health Bar -->
-                    <div class="package-health-card" onclick="navigateTo('screen-package-apply')">
-                        <div class="package-health-header">
-                            <div class="package-health-icon">🔋</div>
-                            <div class="package-health-info">
-                                <div class="package-health-name">VIP for 5 days</div>
-                                <div class="package-health-category">Motors › Cars</div>
-                            </div>
-                            <div class="chevron">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                    <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
-                                </svg>
+                    <div class="package-card-main" onclick="navigateTo('screen-package-apply')">
+                        <div class="package-indicator"></div>
+                        <div class="package-content">
+                            <div class="package-name">VIP for 5 days</div>
+                            <div class="package-service">VIP for 5 days</div>
+                            <div class="package-category">Motors ‣ Cars</div>
+                            <div class="package-meta">
+                                <span class="expiry-warning">Until 31 January</span>
+                                <span class="usage">Ads used: 0/5</span>
                             </div>
                         </div>
-                        <div class="package-health-battery">
-                            <div class="battery-visual">
-                                <div class="battery-segments">
-                                    <div class="battery-segment filled"></div>
-                                    <div class="battery-segment filled"></div>
-                                    <div class="battery-segment filled"></div>
-                                    <div class="battery-segment filled"></div>
-                                    <div class="battery-segment"></div>
-                                </div>
-                                <div class="battery-cap"></div>
-                            </div>
-                            <div class="battery-text">
-                                <span class="battery-count" id="battery-count">5/5</span>
-                                <span class="battery-label">осталось</span>
-                            </div>
-                        </div>
-                        <div class="package-health-footer">
-                            <div class="health-timer">
-                                <span class="timer-icon">⏰</span>
-                                <span class="timer-text">Истекает через 12 дней</span>
-                            </div>
-                            <div class="health-tip" id="health-tip">
-                                <span class="tip-icon">💡</span>
-                                <span class="tip-text">Используйте на премиум-авто</span>
-                            </div>
+                        <div class="chevron">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
+                            </svg>
                         </div>
                     </div>
                 </div>
@@ -342,41 +307,47 @@
             </div>
 
             <div class="promotion-content">
-                <!-- Quick Bundles Section -->
-                <div class="bundles-section">
-                    <div class="bundles-header">
-                        <h3 class="bundles-title">🚀 Быстрые сценарии</h3>
-                        <p class="bundles-subtitle">Один клик — оптимальная стратегия</p>
+                <!-- Quick Scenarios Section (Clean Style) -->
+                <div class="scenarios-section">
+                    <div class="promo-section-header">
+                        <h2 class="promo-section-title">Quick scenarios</h2>
+                        <p class="promo-section-subtitle">One tap to apply optimal strategy</p>
                     </div>
-                    <div class="bundles-grid">
-                        <div class="bundle-card" onclick="applyBundle('fast-sale')">
-                            <div class="bundle-icon">🔥</div>
-                            <div class="bundle-content">
-                                <div class="bundle-name">Быстрая продажа</div>
-                                <div class="bundle-desc">VIP на 3 самых просматриваемых</div>
+                    <div class="scenarios-list">
+                        <div class="scenario-card" onclick="applyBundle('fast-sale')">
+                            <div class="scenario-content">
+                                <div class="scenario-name">Fast sale</div>
+                                <div class="scenario-desc">VIP for 3 most viewed ads</div>
                             </div>
-                            <div class="bundle-action">
-                                <span class="bundle-count">3 ads</span>
-                            </div>
-                        </div>
-                        <div class="bundle-card" onclick="applyBundle('premium')">
-                            <div class="bundle-icon">💎</div>
-                            <div class="bundle-content">
-                                <div class="bundle-name">Премиум витрина</div>
-                                <div class="bundle-desc">TOP на все авто >€50k</div>
-                            </div>
-                            <div class="bundle-action">
-                                <span class="bundle-count">7 ads</span>
+                            <div class="scenario-meta">
+                                <span class="scenario-count">3 ads</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
+                                </svg>
                             </div>
                         </div>
-                        <div class="bundle-card" onclick="applyBundle('refresh')">
-                            <div class="bundle-icon">🔄</div>
-                            <div class="bundle-content">
-                                <div class="bundle-name">Обновить старые</div>
-                                <div class="bundle-desc">Update на объявления >7 дней</div>
+                        <div class="scenario-card" onclick="applyBundle('premium')">
+                            <div class="scenario-content">
+                                <div class="scenario-name">Premium showcase</div>
+                                <div class="scenario-desc">TOP for all cars over €50k</div>
                             </div>
-                            <div class="bundle-action">
-                                <span class="bundle-count">12 ads</span>
+                            <div class="scenario-meta">
+                                <span class="scenario-count">7 ads</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="scenario-card" onclick="applyBundle('refresh')">
+                            <div class="scenario-content">
+                                <div class="scenario-name">Refresh old listings</div>
+                                <div class="scenario-desc">Update ads older than 7 days</div>
+                            </div>
+                            <div class="scenario-meta">
+                                <span class="scenario-count">12 ads</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
+                                </svg>
                             </div>
                         </div>
                     </div>

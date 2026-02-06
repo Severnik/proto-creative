@@ -2043,87 +2043,62 @@ html, body {
 }
 
 /* ========================================
-   Promotion Bundles Section
+   Quick Scenarios Section (Clean Style)
    ======================================== */
 
-.bundles-section {
+.scenarios-section {
     padding: 16px;
-    background: #FFFFFF;
+    background: #F2F3F7;
 }
 
-.bundles-header {
-    margin-bottom: 12px;
-}
-
-.bundles-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #1D2023;
-    margin-bottom: 4px;
-}
-
-.bundles-subtitle {
-    font-size: 14px;
-    color: #626C77;
-}
-
-.bundles-grid {
+.scenarios-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.bundle-card {
+.scenario-card {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 12px;
+    padding: 16px;
+    background: #FFFFFF;
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    border: 1px solid transparent;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.08), 0px 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-.bundle-card:active {
-    transform: scale(0.98);
-    border-color: #0066FF;
-    background: linear-gradient(135deg, #e7f0ff 0%, #dbeafe 100%);
+.scenario-card:active {
+    background: #F9F9F9;
 }
 
-.bundle-icon {
-    font-size: 28px;
-    flex-shrink: 0;
-}
-
-.bundle-content {
+.scenario-content {
     flex: 1;
     min-width: 0;
 }
 
-.bundle-name {
-    font-size: 15px;
-    font-weight: 600;
+.scenario-name {
+    font-size: 16px;
+    font-weight: 500;
     color: #1D2023;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
-.bundle-desc {
-    font-size: 13px;
+.scenario-desc {
+    font-size: 14px;
     color: #626C77;
 }
 
-.bundle-action {
+.scenario-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-shrink: 0;
 }
 
-.bundle-count {
-    background: #0066FF;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
+.scenario-count {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0066FF;
 }
 
 /* ========================================
