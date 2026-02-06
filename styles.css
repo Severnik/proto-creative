@@ -433,6 +433,131 @@ html, body {
     justify-content: center;
 }
 
+/* Recommendations Section */
+.recommendations-section {
+    padding: 16px;
+    padding-bottom: 8px;
+}
+
+.recommendations-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1D2023;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recommendations-list {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.recommendations-list::-webkit-scrollbar {
+    display: none;
+}
+
+.recommendation-card {
+    flex: 0 0 280px;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    scroll-snap-align: start;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recommendation-card:active {
+    transform: scale(0.98);
+}
+
+.recommendation-card-inner {
+    display: flex;
+    padding: 12px;
+    gap: 12px;
+}
+
+.recommendation-image {
+    width: 72px;
+    height: 72px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #F2F3F7;
+    flex-shrink: 0;
+}
+
+.recommendation-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.recommendation-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1D2023;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recommendation-metric {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.metric-icon {
+    width: 16px;
+    height: 16px;
+    color: #626C77;
+}
+
+.metric-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1D2023;
+}
+
+.metric-label {
+    font-size: 12px;
+    color: #626C77;
+}
+
+.recommendation-reason {
+    font-size: 12px;
+    color: #B42525;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+.recommendation-action {
+    display: flex;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, #2C3135 0%, #3D4449 100%);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
+
+.recommendation-action svg {
+    width: 14px;
+    height: 14px;
+}
+
 /* Scrollable Content Area - Full page scroll */
 .scrollable-content {
     flex: 1;

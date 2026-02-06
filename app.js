@@ -737,6 +737,104 @@ function renderSmartSuggestions() {
     `).join('');
 }
 
+// Render recommendations on main page
+function renderRecommendations() {
+    const container = document.getElementById('recommendations-list');
+    const section = document.getElementById('recommendations-section');
+    if (!container || !section) return;
+
+    // Get listings that would benefit from promotion
+    const recommendations = [];
+
+    // Find active listings without any promotion, sorted by views
+    const noPromoListings = mockListings
+        .filter(l => l.status === 'active' && !l.hasVip && !l.hasTop)
+        .sort((a, b) => b.views - a.views);
+
+    // Add top 3 recommendations with reasons
+    noPromoListings.slice(0, 3).forEach((listing, idx) => {
+        let reason, metric, metricLabel;
+
+        if (listing.views > 200) {
+            reason = "Много просмотров — VIP ускорит продажу";
+            metric = listing.views;
+            metricLabel = "просмотров";
+        } else if (listing.favorites > 10) {
+            reason = "Высокий интерес покупателей";
+            metric = listing.favorites;
+            metricLabel = "в избранном";
+        } else if (listing.price > 50000) {
+            reason = "Премиум товар — выделите среди других";
+            metric = listing.views;
+            metricLabel = "просмотров";
+        } else {
+            reason = "Поднимите выше конкурентов";
+            metric = listing.views;
+            metricLabel = "просмотров";
+        }
+
+        recommendations.push({
+            listing,
+            reason,
+            metric,
+            metricLabel,
+            icon: idx === 0 ? 'eye' : (idx === 1 ? 'heart' : 'trending')
+        });
+    });
+
+    if (recommendations.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+
+    container.innerHTML = recommendations.map(r => `
+        <div class="recommendation-card" onclick="openRecommendationPromo(${r.listing.id})">
+            <div class="recommendation-card-inner">
+                <img src="${r.listing.image}" alt="${r.listing.title}" class="recommendation-image">
+                <div class="recommendation-content">
+                    <div class="recommendation-title">${r.listing.title}</div>
+                    <div class="recommendation-metric">
+                        ${getMetricIcon(r.icon)}
+                        <span class="metric-value">${r.metric}</span>
+                        <span class="metric-label">${r.metricLabel}</span>
+                    </div>
+                    <div class="recommendation-reason">${r.reason}</div>
+                </div>
+            </div>
+            <div class="recommendation-action">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 4V16M12 4L8 8M12 4L16 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Продвинуть
+            </div>
+        </div>
+    `).join('');
+}
+
+// Get metric icon SVG
+function getMetricIcon(type) {
+    switch(type) {
+        case 'eye':
+            return '<svg class="metric-icon" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>';
+        case 'heart':
+            return '<svg class="metric-icon" viewBox="0 0 24 24" fill="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" stroke-width="2"/></svg>';
+        case 'trending':
+            return '<svg class="metric-icon" viewBox="0 0 24 24" fill="none"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="17 6 23 6 23 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        default:
+            return '<svg class="metric-icon" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>';
+    }
+}
+
+// Open promotion flow for recommended listing
+function openRecommendationPromo(listingId) {
+    state.selectedListings.clear();
+    state.selectedListings.add(listingId);
+    updateSelectionUI();
+    navigateTo('screen-select-promotion');
+}
+
 // Apply suggestion (quick VIP)
 function applySuggestion(listingId) {
     state.selectedListings.clear();
@@ -889,6 +987,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateProgressBar();
     updateWalletDisplay();
     renderSmartSuggestions();
+    renderRecommendations();
     updatePackageHealthBar();
 });
 
