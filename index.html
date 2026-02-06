@@ -292,92 +292,104 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
                 </div>
             </div>
-            <div class="top-app-bar with-subtitle">
+            <div class="top-app-bar-promotion">
                 <button class="icon-btn back-btn" onclick="navigateTo('screen-my-listings')">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M15 18L9 12L15 6" stroke="#1D2023" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
-                <div class="title-group">
-                    <h1 class="title">Promotion</h1>
-                    <span class="subtitle">My ads</span>
+                <div class="title-group-left">
+                    <h1 class="title-promotion">Promotion</h1>
+                    <span class="subtitle-promotion">My ads</span>
                 </div>
-                <div style="width: 40px;"></div>
             </div>
 
-            <div class="content-area">
-                <!-- Package offer Section Header -->
-                <div class="section-header-grey">
-                    <h2 class="section-header-title">Package offer</h2>
-                    <p class="section-header-subtitle">Promote ads corresponding to packages</p>
-                </div>
+            <div class="promotion-content">
+                <!-- Package offer Section -->
+                <div class="promo-section">
+                    <div class="promo-section-header">
+                        <h2 class="promo-section-title">Package offer</h2>
+                        <p class="promo-section-subtitle">Promote ads corresponding to packages</p>
+                    </div>
 
-                <!-- Package Cards -->
-                <div class="cards-container">
-                    <div class="package-promo-card" onclick="navigateTo('screen-package-apply')">
-                        <div class="package-promo-content">
-                            <div class="package-promo-name">VIP for 5 days</div>
-                            <div class="package-promo-service">VIP for 5 days</div>
-                            <div class="package-promo-category">Motors › Cars</div>
-                            <div class="package-promo-meta">
-                                <span class="package-expiry-warning">Until 31 January</span>
-                                <span class="package-usage">Ads used: 0/5</span>
+                    <!-- Package Card 1 -->
+                    <div class="promo-package-card" onclick="navigateTo('screen-package-apply')">
+                        <div class="promo-package-content">
+                            <div class="promo-package-name">VIP for 5 days</div>
+                            <div class="promo-package-details">
+                                <span class="promo-package-type">VIP for 5 days</span>
+                                <span class="promo-package-category">Motors ‣ Cars</span>
+                            </div>
+                            <div class="promo-package-meta">
+                                <span class="promo-package-expiry warning">Until 31 January</span>
+                                <span class="promo-package-usage">Ads used: 0/5</span>
                             </div>
                         </div>
-                        <div class="package-promo-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <div class="promo-package-right">
+                            <svg class="promo-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
+                            </svg>
+                            <div class="promo-indicator-dot"></div>
+                        </div>
+                    </div>
+
+                    <!-- Package Card 2 -->
+                    <div class="promo-package-card" onclick="navigateTo('screen-package-apply')">
+                        <div class="promo-package-content">
+                            <div class="promo-package-name">Present package for our good friends</div>
+                            <div class="promo-package-details">
+                                <span class="promo-package-type">TopAd for 5 days</span>
+                                <span class="promo-package-category">Motors ‣ Car rentals</span>
+                            </div>
+                            <div class="promo-package-meta">
+                                <span class="promo-package-expiry">Until 17 July</span>
+                                <span class="promo-package-usage">Ads used: 0/5</span>
+                            </div>
+                        </div>
+                        <div class="promo-package-right">
+                            <svg class="promo-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
                             </svg>
                         </div>
-                        <div class="package-indicator-dot"></div>
-                    </div>
-
-                    <div class="package-promo-card" onclick="navigateTo('screen-package-apply')">
-                        <div class="package-promo-content">
-                            <div class="package-promo-name">Present package for our good friends</div>
-                            <div class="package-promo-service">TopAd for 5 days</div>
-                            <div class="package-promo-category">Motors › Car rentals</div>
-                            <div class="package-promo-meta">
-                                <span class="package-expiry">Until 17 July</span>
-                                <span class="package-usage">Ads used: 0/5</span>
-                            </div>
-                        </div>
-                        <div class="package-promo-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
-                            </svg>
-                        </div>
                     </div>
                 </div>
 
-                <!-- Payable from wallet Section Header -->
-                <div class="section-header-white">
-                    <h2 class="section-header-title">Payable from your wallet</h2>
-                    <p class="section-header-subtitle">Ads that are not included in the package promotion</p>
-                </div>
+                <!-- Payable from wallet Section -->
+                <div class="promo-section">
+                    <div class="promo-section-header">
+                        <h2 class="promo-section-title">Payable from your wallet</h2>
+                        <p class="promo-section-subtitle">Ads that are not included in the package promotion</p>
+                    </div>
 
-                <!-- Wallet Cards -->
-                <div class="cards-container white-bg">
-                    <div class="wallet-card-row" onclick="navigateTo('screen-wallet-apply')">
-                        <div class="wallet-badge vip">VIP</div>
-                        <div class="wallet-description">Updates listing date to increase visibility</div>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <!-- VIP Card -->
+                    <div class="promo-wallet-card" onclick="navigateTo('screen-wallet-apply')">
+                        <div class="promo-wallet-content">
+                            <div class="promo-wallet-badge vip">VIP</div>
+                            <div class="promo-wallet-description">Updates listing date to increase visibility</div>
+                        </div>
+                        <svg class="promo-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
                         </svg>
                     </div>
 
-                    <div class="wallet-card-row" onclick="navigateTo('screen-wallet-apply')">
-                        <div class="wallet-badge top">TOP</div>
-                        <div class="wallet-description">Updates listing date to increase visibility</div>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <!-- TOP Card -->
+                    <div class="promo-wallet-card" onclick="navigateTo('screen-wallet-apply')">
+                        <div class="promo-wallet-content">
+                            <div class="promo-wallet-badge top">TOP</div>
+                            <div class="promo-wallet-description">Updates listing date to increase visibility</div>
+                        </div>
+                        <svg class="promo-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
                         </svg>
                     </div>
 
-                    <div class="wallet-card-row" onclick="navigateTo('screen-wallet-apply')">
-                        <div class="wallet-label">Update</div>
-                        <div class="wallet-description">Updates listing date to increase visibility</div>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <!-- Update Card -->
+                    <div class="promo-wallet-card" onclick="navigateTo('screen-wallet-apply')">
+                        <div class="promo-wallet-content">
+                            <div class="promo-wallet-label">Update</div>
+                            <div class="promo-wallet-description">Updates listing date to increase visibility</div>
+                        </div>
+                        <svg class="promo-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
                         </svg>
                     </div>

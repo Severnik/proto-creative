@@ -1182,6 +1182,240 @@ html, body {
     color: #626C77;
 }
 
+/* ========================================
+   Select Promotion Screen (B2) - Figma Match
+   ======================================== */
+
+/* Top App Bar for Promotion */
+.top-app-bar-promotion {
+    height: 56px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    background: #FFFFFF;
+    gap: 4px;
+}
+
+.title-group-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.title-promotion {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: #1D2023;
+    line-height: 28px;
+}
+
+.subtitle-promotion {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #626C77;
+    line-height: 16px;
+}
+
+/* Promotion Content Area */
+.promotion-content {
+    flex: 1;
+    overflow-y: auto;
+    background: #F2F3F7;
+}
+
+/* Promo Section */
+.promo-section {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.promo-section-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 8px;
+}
+
+.promo-section-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #1D2023;
+    line-height: 24px;
+}
+
+.promo-section-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #626C77;
+    line-height: 20px;
+}
+
+/* Promo Package Card */
+.promo-package-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.08), 0px 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.promo-package-card:active {
+    background: #F9F9F9;
+}
+
+.promo-package-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.promo-package-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1D2023;
+    line-height: 20px;
+}
+
+.promo-package-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.promo-package-type {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #1D2023;
+    line-height: 16px;
+}
+
+.promo-package-category {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: #1D2023;
+    line-height: 16px;
+}
+
+.promo-package-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.promo-package-expiry {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1D2023;
+    line-height: 20px;
+}
+
+.promo-package-expiry.warning {
+    color: #FFAB00;
+}
+
+.promo-package-usage {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #626C77;
+    line-height: 20px;
+}
+
+.promo-package-right {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    gap: 8px;
+}
+
+.promo-chevron {
+    flex-shrink: 0;
+}
+
+.promo-indicator-dot {
+    width: 12px;
+    height: 12px;
+    background: #0066FF;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Promo Wallet Card */
+.promo-wallet-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.08), 0px 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.promo-wallet-card:active {
+    background: #F9F9F9;
+}
+
+.promo-wallet-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.promo-wallet-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    padding: 8px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 10px;
+    width: fit-content;
+}
+
+.promo-wallet-badge.vip {
+    background: #B42525;
+    color: #FFFFFF;
+}
+
+.promo-wallet-badge.top {
+    background: #FFAB00;
+    color: #1D2023;
+}
+
+.promo-wallet-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1D2023;
+    line-height: 20px;
+}
+
+.promo-wallet-description {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #1D2023;
+    line-height: 16px;
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
     width: 4px;
