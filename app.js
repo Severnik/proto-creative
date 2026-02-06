@@ -900,11 +900,21 @@ function navigateTo(screenId) {
     document.getElementById(screenId).classList.add('active');
     state.currentScreen = screenId;
 
-    // Reset selection when navigating
-    if (screenId === 'screen-my-listings') {
-        state.selectedListings.clear();
-        updateSelectionUI();
-    }
+    // Reset selection when navigating to any screen
+    state.selectedListings.clear();
+
+    // Reset all "Select all" checkboxes
+    document.querySelectorAll('[id^="select-all-"]').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+
+    // Re-render listings to clear checkbox states
+    renderListings('listings-main', mockListings);
+    renderListings('listings-package', mockListings.filter(l => l.status === 'active'));
+    renderListings('listings-wallet', mockListings.filter(l => l.status === 'active'));
+    renderListings('listings-success', mockListings);
+
+    updateSelectionUI();
 }
 
 // Render listings
