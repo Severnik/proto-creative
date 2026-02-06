@@ -1,10 +1,10 @@
-const CACHE_NAME = 'listings-prototype-v16';
+const CACHE_NAME = 'listings-prototype-v17';
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/styles.css',
-    '/app.js',
-    '/manifest.json'
+    './',
+    './index.html',
+    './styles.css',
+    './app.js',
+    './manifest.json'
 ];
 
 // Install event
