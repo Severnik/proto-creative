@@ -2125,13 +2125,27 @@ html, body {
 }
 
 /* ========================================
-   Package Cards List
+   Package Cards List (Horizontal Carousel)
    ======================================== */
 
 .package-cards-list {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+}
+
+.package-cards-list::-webkit-scrollbar {
+    display: none;
+}
+
+.package-cards-list .package-card-main {
+    flex-shrink: 0;
+    width: 280px;
+    scroll-snap-align: start;
 }
 
 .expiry-normal {
