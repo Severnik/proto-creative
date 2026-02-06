@@ -2084,14 +2084,32 @@ html, body {
 }
 
 .scenario-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     background: #F2F3F7;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+}
+
+/* Rocket icon - red/coral gradient */
+.scenario-icon.icon-rocket {
+    background: linear-gradient(135deg, #E8475F 0%, #FF6B6B 100%);
+    box-shadow: 0 4px 12px rgba(232, 71, 95, 0.3);
+}
+
+/* Crown icon - gold gradient */
+.scenario-icon.icon-crown {
+    background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Magic wand icon - purple gradient */
+.scenario-icon.icon-magic {
+    background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
 .scenario-content {
