@@ -70,78 +70,81 @@
                 </div>
             </div>
 
-            <div class="sort-control">
-                <div class="select-all">
-                    <input type="checkbox" id="select-all-main" class="checkbox">
-                    <label for="select-all-main">Select all</label>
-                </div>
-                <div class="sorting" onclick="openSortModal()">
-                    <span id="sort-display">Sort</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M6 9L12 15L18 9" stroke="#1D2023" stroke-width="2"/>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Smart Suggestions Section -->
-            <div class="smart-suggestions-section" id="smart-suggestions">
-                <div class="suggestions-header">
-                    <span class="suggestions-icon">💡</span>
-                    <h3 class="suggestions-title">Рекомендуем продвинуть</h3>
-                </div>
-                <div class="suggestions-carousel" id="suggestions-carousel">
-                    <!-- Suggestions will be injected here -->
-                </div>
-            </div>
-
-            <!-- Package Offer Section -->
-            <div class="package-offer-section" id="package-wrapper-main">
-                <h2 class="package-offer-title">Package offer</h2>
-                <!-- Package Health Bar -->
-                <div class="package-health-card" onclick="navigateTo('screen-package-apply')">
-                    <div class="package-health-header">
-                        <div class="package-health-icon">🔋</div>
-                        <div class="package-health-info">
-                            <div class="package-health-name">VIP for 5 days</div>
-                            <div class="package-health-category">Motors › Cars</div>
-                        </div>
-                        <div class="chevron">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
-                            </svg>
-                        </div>
+            <!-- Scrollable Content Area -->
+            <div class="scrollable-content" id="main-scrollable-content">
+                <div class="sort-control">
+                    <div class="select-all">
+                        <input type="checkbox" id="select-all-main" class="checkbox">
+                        <label for="select-all-main">Select all</label>
                     </div>
-                    <div class="package-health-battery">
-                        <div class="battery-visual">
-                            <div class="battery-segments">
-                                <div class="battery-segment filled"></div>
-                                <div class="battery-segment filled"></div>
-                                <div class="battery-segment filled"></div>
-                                <div class="battery-segment filled"></div>
-                                <div class="battery-segment"></div>
+                    <div class="sorting" onclick="openSortModal()">
+                        <span id="sort-display">Sort</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 9L12 15L18 9" stroke="#1D2023" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Smart Suggestions Section -->
+                <div class="smart-suggestions-section" id="smart-suggestions">
+                    <div class="suggestions-header">
+                        <span class="suggestions-icon">💡</span>
+                        <h3 class="suggestions-title">Рекомендуем продвинуть</h3>
+                    </div>
+                    <div class="suggestions-carousel" id="suggestions-carousel">
+                        <!-- Suggestions will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Package Offer Section -->
+                <div class="package-offer-section" id="package-wrapper-main">
+                    <h2 class="package-offer-title">Package offer</h2>
+                    <!-- Package Health Bar -->
+                    <div class="package-health-card" onclick="navigateTo('screen-package-apply')">
+                        <div class="package-health-header">
+                            <div class="package-health-icon">🔋</div>
+                            <div class="package-health-info">
+                                <div class="package-health-name">VIP for 5 days</div>
+                                <div class="package-health-category">Motors › Cars</div>
                             </div>
-                            <div class="battery-cap"></div>
+                            <div class="chevron">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
+                                </svg>
+                            </div>
                         </div>
-                        <div class="battery-text">
-                            <span class="battery-count" id="battery-count">5/5</span>
-                            <span class="battery-label">осталось</span>
+                        <div class="package-health-battery">
+                            <div class="battery-visual">
+                                <div class="battery-segments">
+                                    <div class="battery-segment filled"></div>
+                                    <div class="battery-segment filled"></div>
+                                    <div class="battery-segment filled"></div>
+                                    <div class="battery-segment filled"></div>
+                                    <div class="battery-segment"></div>
+                                </div>
+                                <div class="battery-cap"></div>
+                            </div>
+                            <div class="battery-text">
+                                <span class="battery-count" id="battery-count">5/5</span>
+                                <span class="battery-label">осталось</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="package-health-footer">
-                        <div class="health-timer">
-                            <span class="timer-icon">⏰</span>
-                            <span class="timer-text">Истекает через 12 дней</span>
-                        </div>
-                        <div class="health-tip" id="health-tip">
-                            <span class="tip-icon">💡</span>
-                            <span class="tip-text">Используйте на премиум-авто</span>
+                        <div class="package-health-footer">
+                            <div class="health-timer">
+                                <span class="timer-icon">⏰</span>
+                                <span class="timer-text">Истекает через 12 дней</span>
+                            </div>
+                            <div class="health-tip" id="health-tip">
+                                <span class="tip-icon">💡</span>
+                                <span class="tip-text">Используйте на премиум-авто</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="listings-list" id="listings-main">
-                <!-- Listings will be injected here -->
+                <div class="listings-list" id="listings-main">
+                    <!-- Listings will be injected here -->
+                </div>
             </div>
 
             <div class="sticky-button" id="promotion-btn" style="display: none;">
