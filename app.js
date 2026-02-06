@@ -1705,7 +1705,10 @@ function showActionToast(message) {
 // Service Worker Registration
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
+        // Use relative path from current location
+        const swPath = new URL('./sw.js', window.location.href).href;
+        console.log('Registering SW from:', swPath);
+        navigator.serviceWorker.register(swPath)
             .then(registration => {
                 console.log('SW registered:', registration);
             })

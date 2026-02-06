@@ -1,9 +1,9 @@
-const CACHE_NAME = 'listings-prototype-v19';
+const CACHE_NAME = 'listings-prototype-v20';
 const urlsToCache = [
     './',
     './index.html',
-    './styles.css?v=19',
-    './app.js?v=19',
+    './styles.css?v=20',
+    './app.js?v=20',
     './manifest.json'
 ];
 
