@@ -124,9 +124,10 @@ const mockListings = [
         favorites: 28,
         image: "https://picsum.photos/seed/car5/160/160",
         hasVip: true,
-        hasTop: true,
+        hasTop: false,
         date: new Date('2024-04-05'),
-        statusText: "Active until 14.04.2026, 17:29"
+        statusText: "Active until 14.04.2026, 17:29",
+        vipText: "VIP until 12.04.2026, 17:29"
     },
     {
         id: 6,
@@ -188,11 +189,10 @@ const mockListings = [
         views: 567,
         favorites: 42,
         image: "https://picsum.photos/seed/car9/160/160",
-        hasVip: true,
+        hasVip: false,
         hasTop: true,
         date: new Date('2024-04-11'),
-        statusText: "Active until 11.04.2026, 10:15",
-        vipText: "VIP until 18.04.2026, 10:15"
+        statusText: "Active until 11.04.2026, 10:15"
     },
     {
         id: 10,
@@ -271,7 +271,7 @@ const mockListings = [
         favorites: 56,
         image: "https://picsum.photos/seed/car14/160/160",
         hasVip: true,
-        hasTop: true,
+        hasTop: false,
         date: new Date('2024-04-02'),
         statusText: "Active until 02.04.2026, 13:45",
         vipText: "VIP until 09.04.2026, 13:45"
@@ -338,7 +338,7 @@ const mockListings = [
         favorites: 34,
         image: "https://picsum.photos/seed/prop1/160/160",
         hasVip: true,
-        hasTop: true,
+        hasTop: false,
         date: new Date('2024-04-13'),
         statusText: "Active until 13.04.2026, 10:00",
         vipText: "VIP until 20.04.2026, 10:00"
@@ -435,11 +435,10 @@ const mockListings = [
         views: 312,
         favorites: 18,
         image: "https://picsum.photos/seed/prop7/160/160",
-        hasVip: true,
+        hasVip: false,
         hasTop: true,
         date: new Date('2024-04-03'),
-        statusText: "Active until 03.04.2026, 08:15",
-        vipText: "VIP until 10.04.2026, 08:15"
+        statusText: "Active until 03.04.2026, 08:15"
     },
     {
         id: 25,
@@ -520,7 +519,7 @@ const mockListings = [
         favorites: 32,
         image: "https://picsum.photos/seed/elec2/160/160",
         hasVip: true,
-        hasTop: true,
+        hasTop: false,
         date: new Date('2024-04-13'),
         statusText: "Active until 13.04.2026, 09:30",
         vipText: "VIP until 20.04.2026, 09:30"
@@ -584,11 +583,10 @@ const mockListings = [
         views: 278,
         favorites: 19,
         image: "https://picsum.photos/seed/elec4/160/160",
-        hasVip: true,
+        hasVip: false,
         hasTop: true,
         date: new Date('2024-04-05'),
-        statusText: "Active until 05.04.2026, 12:00",
-        vipText: "VIP until 12.04.2026, 12:00"
+        statusText: "Active until 05.04.2026, 12:00"
     },
     {
         id: 34,
@@ -1005,12 +1003,15 @@ function applyPackagePromotion() {
     // Update package usage
     matchingPackage.used++;
 
-    // Apply promotion to listing
+    // Apply promotion to listing (VIP and TOP are mutually exclusive)
     if (matchingPackage.type === 'vip') {
         listing.hasVip = true;
+        listing.hasTop = false; // Remove TOP if present
         listing.vipText = `VIP until ${matchingPackage.expiryDate}`;
     } else if (matchingPackage.type === 'top') {
         listing.hasTop = true;
+        listing.hasVip = false; // Remove VIP if present
+        delete listing.vipText;
     }
 
     // Close sheet and show success
@@ -1029,13 +1030,17 @@ function applyWalletPromotion() {
 
     const price = promoPrices[selectedPromoType];
 
-    // Apply promotion to listing
+    // Apply promotion to listing (VIP and TOP are mutually exclusive)
     if (selectedPromoType === 'vip') {
         listing.hasVip = true;
+        listing.hasTop = false; // Remove TOP if present
         listing.vipText = "VIP на 5 дней";
     } else if (selectedPromoType === 'top') {
         listing.hasTop = true;
+        listing.hasVip = false; // Remove VIP if present
+        delete listing.vipText;
     }
+    // Note: 'update' type doesn't change VIP/TOP status
 
     // Close sheet and show success
     closePromotionSheet();
