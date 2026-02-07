@@ -10,7 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=28">
+    <link rel="stylesheet" href="styles.css?v=29">
 </head>
 <body>
     <div id="app">
@@ -197,22 +197,34 @@
         <!-- Status Dropdown Modal -->
         <div id="status-dropdown" class="dropdown-modal" style="display: none;">
             <div class="dropdown-overlay" onclick="closeStatusDropdown()"></div>
-            <div class="dropdown-content">
+            <div class="dropdown-content status-dropdown-content">
                 <div class="dropdown-option selected" data-value="" onclick="selectStatus('')">
-                    <span>All status</span>
-                    <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 8" stroke="#0066FF" stroke-width="2" stroke-linecap="round"/></svg>
+                    <span>Все</span>
+                    <span class="status-count" id="status-count-all">0</span>
                 </div>
                 <div class="dropdown-option" data-value="active" onclick="selectStatus('active')">
-                    <span>Active</span>
-                    <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 8" stroke="#0066FF" stroke-width="2" stroke-linecap="round"/></svg>
+                    <span>Опубликованные</span>
+                    <span class="status-count" id="status-count-active">0</span>
+                </div>
+                <div class="dropdown-option" data-value="unpaid" onclick="selectStatus('unpaid')">
+                    <span>Неоплаченные</span>
+                    <span class="status-count" id="status-count-unpaid">0</span>
                 </div>
                 <div class="dropdown-option" data-value="pending" onclick="selectStatus('pending')">
-                    <span>Pending</span>
-                    <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 8" stroke="#0066FF" stroke-width="2" stroke-linecap="round"/></svg>
+                    <span>На проверке</span>
+                    <span class="status-count" id="status-count-pending">0</span>
                 </div>
-                <div class="dropdown-option" data-value="expired" onclick="selectStatus('expired')">
-                    <span>Expired</span>
-                    <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 8" stroke="#0066FF" stroke-width="2" stroke-linecap="round"/></svg>
+                <div class="dropdown-option" data-value="hidden" onclick="selectStatus('hidden')">
+                    <span>Скрытые</span>
+                    <span class="status-count" id="status-count-hidden">0</span>
+                </div>
+                <div class="dropdown-option" data-value="rejected" onclick="selectStatus('rejected')">
+                    <span>Отклонённые</span>
+                    <span class="status-count" id="status-count-rejected">0</span>
+                </div>
+                <div class="dropdown-option" data-value="deleting" onclick="selectStatus('deleting')">
+                    <span>На удаление</span>
+                    <span class="status-count" id="status-count-deleting">0</span>
                 </div>
             </div>
         </div>
@@ -924,6 +936,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=28"></script>
+    <script src="app.js?v=29"></script>
 </body>
 </html>

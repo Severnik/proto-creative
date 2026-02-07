@@ -152,14 +152,14 @@ const mockListings = [
         priceDisplay: "€2.500",
         location: "Paphos",
         category: "furniture",
-        status: "expired",
+        status: "hidden",
         views: 87,
         favorites: 3,
         image: "https://picsum.photos/seed/sofa1/160/160",
         hasVip: false,
         hasTop: false,
         date: new Date('2024-03-01'),
-        statusText: "Expired on 01.03.2024"
+        statusText: "Hidden"
     },
     // Additional Motors listings
     {
@@ -652,6 +652,71 @@ const mockListings = [
         date: new Date('2024-03-27'),
         statusText: "Active until 27.03.2026, 11:30",
         vipText: "VIP until 03.04.2026, 11:30"
+    },
+    // Additional listings with various statuses for demo
+    {
+        id: 38,
+        title: "Vintage Watch Collection",
+        price: 3500,
+        priceDisplay: "€3.500",
+        location: "Nicosia",
+        category: "furniture",
+        status: "rejected",
+        views: 0,
+        favorites: 0,
+        image: "https://picsum.photos/seed/watch1/160/160",
+        hasVip: false,
+        hasTop: false,
+        date: new Date('2024-04-15'),
+        statusText: "Rejected: Prohibited item"
+    },
+    {
+        id: 39,
+        title: "Mountain Bike Scott 2023",
+        price: 1200,
+        priceDisplay: "€1.200",
+        location: "Limassol",
+        category: "furniture",
+        status: "deleting",
+        views: 45,
+        favorites: 2,
+        image: "https://picsum.photos/seed/bike1/160/160",
+        hasVip: false,
+        hasTop: false,
+        date: new Date('2024-04-10'),
+        statusText: "Pending deletion"
+    },
+    {
+        id: 40,
+        title: "Antique Furniture Set",
+        price: 5500,
+        priceDisplay: "€5.500",
+        location: "Paphos",
+        category: "furniture",
+        status: "hidden",
+        views: 120,
+        favorites: 8,
+        image: "https://picsum.photos/seed/antique1/160/160",
+        hasVip: false,
+        hasTop: false,
+        date: new Date('2024-04-08'),
+        statusText: "Hidden by owner"
+    },
+    {
+        id: 41,
+        title: "Electric Scooter Xiaomi",
+        price: 450,
+        priceDisplay: "€450",
+        location: "Larnaca",
+        category: "furniture",
+        status: "hidden",
+        views: 89,
+        favorites: 5,
+        image: "https://picsum.photos/seed/scooter1/160/160",
+        hasVip: false,
+        hasTop: false,
+        date: new Date('2024-04-05'),
+        statusText: "Hidden by owner"
     }
 ];
 
@@ -1218,6 +1283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSelectAllHandlers();
     updateSortDisplay();
     updateDropdownSelections();
+    updateStatusCounts();
     updateProgressBar();
     updateWalletDisplay();
     renderSmartSuggestions();
@@ -1543,12 +1609,41 @@ function closeStatusDropdown() {
 
 function selectStatus(value) {
     state.filters.status = value;
-    document.getElementById('status-display').textContent = value ?
-        value.charAt(0).toUpperCase() + value.slice(1) : 'All status';
+
+    const statusLabels = {
+        '': 'Все',
+        'active': 'Опубликованные',
+        'unpaid': 'Неоплаченные',
+        'pending': 'На проверке',
+        'hidden': 'Скрытые',
+        'rejected': 'Отклонённые',
+        'deleting': 'На удаление'
+    };
+
+    document.getElementById('status-display').textContent = statusLabels[value] || 'Все';
     closeStatusDropdown();
     updateDropdownSelections();
+    updateStatusCounts();
     updateFilterBadge();
     updateAllListings();
+}
+
+// Update status counts
+function updateStatusCounts() {
+    const counts = {
+        all: mockListings.length,
+        active: mockListings.filter(l => l.status === 'active').length,
+        unpaid: mockListings.filter(l => l.status === 'unpaid').length,
+        pending: mockListings.filter(l => l.status === 'pending').length,
+        hidden: mockListings.filter(l => l.status === 'hidden').length,
+        rejected: mockListings.filter(l => l.status === 'rejected').length,
+        deleting: mockListings.filter(l => l.status === 'deleting').length
+    };
+
+    Object.keys(counts).forEach(status => {
+        const el = document.getElementById(`status-count-${status}`);
+        if (el) el.textContent = counts[status];
+    });
 }
 
 // Promotion dropdown
