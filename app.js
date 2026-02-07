@@ -1300,8 +1300,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function navigateTo(screenId) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
+        screen.style.display = 'none';
     });
-    document.getElementById(screenId).classList.add('active');
+    const targetScreen = document.getElementById(screenId);
+    targetScreen.style.display = 'flex';
+    targetScreen.classList.add('active');
     state.currentScreen = screenId;
 
     // Reset selection when navigating to any screen
