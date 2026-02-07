@@ -10,7 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=30">
+    <link rel="stylesheet" href="styles.css?v=31">
 </head>
 <body>
     <div id="app">
@@ -91,7 +91,7 @@
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#FFAB00"/>
                         </svg>
-                        Рекомендуем продвинуть
+                        Recommended to promote
                     </h2>
                     <div class="recommendations-list" id="recommendations-list">
                         <!-- Recommendation cards will be injected here -->
@@ -199,31 +199,31 @@
             <div class="dropdown-overlay" onclick="closeStatusDropdown()"></div>
             <div class="dropdown-content status-dropdown-content">
                 <div class="dropdown-option selected" data-value="" onclick="selectStatus('')">
-                    <span>Все</span>
+                    <span>All</span>
                     <span class="status-count" id="status-count-all">0</span>
                 </div>
                 <div class="dropdown-option" data-value="active" onclick="selectStatus('active')">
-                    <span>Опубликованные</span>
+                    <span>Published</span>
                     <span class="status-count" id="status-count-active">0</span>
                 </div>
                 <div class="dropdown-option" data-value="unpaid" onclick="selectStatus('unpaid')">
-                    <span>Неоплаченные</span>
+                    <span>Unpaid</span>
                     <span class="status-count" id="status-count-unpaid">0</span>
                 </div>
                 <div class="dropdown-option" data-value="pending" onclick="selectStatus('pending')">
-                    <span>На проверке</span>
+                    <span>Pending review</span>
                     <span class="status-count" id="status-count-pending">0</span>
                 </div>
                 <div class="dropdown-option" data-value="hidden" onclick="selectStatus('hidden')">
-                    <span>Скрытые</span>
+                    <span>Hidden</span>
                     <span class="status-count" id="status-count-hidden">0</span>
                 </div>
                 <div class="dropdown-option" data-value="rejected" onclick="selectStatus('rejected')">
-                    <span>Отклонённые</span>
+                    <span>Rejected</span>
                     <span class="status-count" id="status-count-rejected">0</span>
                 </div>
                 <div class="dropdown-option" data-value="deleting" onclick="selectStatus('deleting')">
-                    <span>На удаление</span>
+                    <span>Pending deletion</span>
                     <span class="status-count" id="status-count-deleting">0</span>
                 </div>
             </div>
@@ -879,23 +879,23 @@
                         </svg>
                     </div>
                     <div class="sheet-option-info">
-                        <div class="sheet-option-title">Использовать пакет</div>
-                        <div class="sheet-option-subtitle" id="sheet-package-name">VIP на 5 дней</div>
+                        <div class="sheet-option-title">Use package</div>
+                        <div class="sheet-option-subtitle" id="sheet-package-name">VIP for 5 days</div>
                     </div>
-                    <div class="sheet-option-badge free">Бесплатно</div>
+                    <div class="sheet-option-badge free">Free</div>
                 </div>
                 <div class="sheet-option-details">
                     <div class="sheet-detail-row">
-                        <span class="sheet-detail-label">Осталось в пакете:</span>
+                        <span class="sheet-detail-label">Remaining in package:</span>
                         <span class="sheet-detail-value" id="sheet-package-remaining">4/5</span>
                     </div>
                     <div class="sheet-detail-row">
-                        <span class="sheet-detail-label">Действует до:</span>
-                        <span class="sheet-detail-value" id="sheet-package-expiry">31 января</span>
+                        <span class="sheet-detail-label">Valid until:</span>
+                        <span class="sheet-detail-value" id="sheet-package-expiry">31 January</span>
                     </div>
                 </div>
                 <button class="sheet-action-btn primary" onclick="applyPackagePromotion()">
-                    Применить из пакета
+                    Apply from package
                 </button>
             </div>
 
@@ -910,8 +910,8 @@
                         </svg>
                     </div>
                     <div class="sheet-option-info">
-                        <div class="sheet-option-title">Оплатить из кошелька</div>
-                        <div class="sheet-option-subtitle">Баланс: <span id="sheet-wallet-balance">€25.00</span></div>
+                        <div class="sheet-option-title">Pay from wallet</div>
+                        <div class="sheet-option-subtitle">Balance: <span id="sheet-wallet-balance">€25.00</span></div>
                     </div>
                     <div class="sheet-option-price" id="sheet-wallet-price">€2.50</div>
                 </div>
@@ -925,17 +925,17 @@
                         <span class="promo-type-price">€1.50</span>
                     </button>
                     <button class="promo-type-btn" data-type="update" onclick="selectPromoType('update')">
-                        <span class="promo-type-label">Поднять</span>
+                        <span class="promo-type-label">Update</span>
                         <span class="promo-type-price">€0.50</span>
                     </button>
                 </div>
                 <button class="sheet-action-btn secondary" onclick="applyWalletPromotion()">
-                    Оплатить <span id="sheet-pay-amount">€2.50</span>
+                    Pay <span id="sheet-pay-amount">€2.50</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <script src="app.js?v=30"></script>
+    <script src="app.js?v=31"></script>
 </body>
 </html>

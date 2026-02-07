@@ -2,35 +2,35 @@
 const mockPackages = [
     {
         id: 1,
-        name: "VIP на 5 дней",
+        name: "VIP for 5 days",
         type: "vip",
         category: "motors",
         subcategory: "cars",
         total: 5,
         used: 1,
-        expiryDate: "31 января",
+        expiryDate: "31 January",
         expiryWarning: true
     },
     {
         id: 2,
-        name: "TOP на 5 дней",
+        name: "TOP for 5 days",
         type: "top",
         category: "motors",
         subcategory: "rentals",
         total: 5,
         used: 2,
-        expiryDate: "17 июля",
+        expiryDate: "17 July",
         expiryWarning: false
     },
     {
         id: 3,
-        name: "VIP на 7 дней",
+        name: "VIP for 7 days",
         type: "vip",
         category: "property",
         subcategory: "apartments",
         total: 3,
         used: 1,
-        expiryDate: "25 марта",
+        expiryDate: "25 March",
         expiryWarning: false
     }
 ];
@@ -755,12 +755,12 @@ let state = {
 
 // Social proof messages for different listing types
 const socialProofMessages = [
-    { text: "Похожий продался за 3 дня с VIP", type: "success", icon: "🎉" },
-    { text: "92% продавцов используют TOP", type: "info", icon: "📊" },
-    { text: "+280% просмотров с VIP", type: "success", icon: "📈" },
-    { text: "В топе поиска последние 24ч", type: "info", icon: "🔥" },
-    { text: "5 человек смотрят прямо сейчас", type: "warning", icon: "👀" },
-    { text: "Высокий спрос в этой категории", type: "success", icon: "💎" }
+    { text: "Similar sold in 3 days with VIP", type: "success", icon: "🎉" },
+    { text: "92% of sellers use TOP", type: "info", icon: "📊" },
+    { text: "+280% views with VIP", type: "success", icon: "📈" },
+    { text: "In top search for last 24h", type: "info", icon: "🔥" },
+    { text: "5 people viewing right now", type: "warning", icon: "👀" },
+    { text: "High demand in this category", type: "success", icon: "💎" }
 ];
 
 // Generate smart suggestions based on listings data
@@ -776,9 +776,9 @@ function generateSmartSuggestions() {
     if (mostViewed) {
         suggestions.push({
             listing: mostViewed,
-            reason: `${mostViewed.views} просмотров — VIP увеличит на 40%`,
+            reason: `${mostViewed.views} views — VIP will increase by 40%`,
             icon: "📈",
-            action: "Добавить VIP"
+            action: "Add VIP"
         });
     }
 
@@ -789,9 +789,9 @@ function generateSmartSuggestions() {
     if (premiumCar) {
         suggestions.push({
             listing: premiumCar,
-            reason: "Премиум авто — TOP выделит среди конкурентов",
+            reason: "Premium car — TOP will stand out from competitors",
             icon: "💎",
-            action: "Добавить TOP"
+            action: "Add TOP"
         });
     }
 
@@ -804,9 +804,9 @@ function generateSmartSuggestions() {
     if (highFavorites) {
         suggestions.push({
             listing: highFavorites,
-            reason: `${highFavorites.favorites} в избранном — горячий интерес!`,
+            reason: `${highFavorites.favorites} in favorites — hot interest!`,
             icon: "❤️",
-            action: "Продвинуть"
+            action: "Promote"
         });
     }
 
@@ -872,21 +872,21 @@ function renderRecommendations() {
         let reason, metric, metricLabel;
 
         if (listing.views > 150) {
-            reason = "Много просмотров — VIP ускорит продажу";
+            reason = "Many views — VIP will speed up the sale";
             metric = listing.views;
-            metricLabel = "просмотров";
+            metricLabel = "views";
         } else if (listing.favorites > 5) {
-            reason = "Высокий интерес покупателей";
+            reason = "High buyer interest";
             metric = listing.favorites;
-            metricLabel = "в избранном";
+            metricLabel = "in favorites";
         } else if (listing.price > 50000) {
-            reason = "Премиум товар — выделите среди других";
+            reason = "Premium item — stand out from others";
             metric = listing.views;
-            metricLabel = "просмотров";
+            metricLabel = "views";
         } else {
-            reason = "Поднимите выше конкурентов";
+            reason = "Rise above competitors";
             metric = listing.views;
-            metricLabel = "просмотров";
+            metricLabel = "views";
         }
 
         recommendations.push({
@@ -925,7 +925,7 @@ function renderRecommendations() {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                     <path d="M12 4V16M12 4L8 8M12 4L16 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Продвинуть
+                Promote
             </div>
         </div>
     `).join('');
@@ -1100,7 +1100,7 @@ function applyWalletPromotion() {
     if (selectedPromoType === 'vip') {
         listing.hasVip = true;
         listing.hasTop = false; // Remove TOP if present
-        listing.vipText = "VIP на 5 дней";
+        listing.vipText = "VIP for 5 days";
     } else if (selectedPromoType === 'top') {
         listing.hasTop = true;
         listing.hasVip = false; // Remove VIP if present
@@ -1119,14 +1119,14 @@ function applyWalletPromotion() {
 
 // Show promotion success message
 function showPromotionSuccess(listing, promoType, fromPackage, pkg, price) {
-    const typeLabels = { vip: 'VIP', top: 'TOP', update: 'Поднятие' };
+    const typeLabels = { vip: 'VIP', top: 'TOP', update: 'Update' };
     const typeLabel = typeLabels[promoType] || promoType.toUpperCase();
 
     let message;
     if (fromPackage && pkg) {
-        message = `${typeLabel} применён из пакета. Осталось: ${pkg.total - pkg.used}/${pkg.total}`;
+        message = `${typeLabel} applied from package. Remaining: ${pkg.total - pkg.used}/${pkg.total}`;
     } else {
-        message = `${typeLabel} применён. Списано €${price.toFixed(2)} с кошелька`;
+        message = `${typeLabel} applied. €${price.toFixed(2)} deducted from wallet`;
     }
 
     // Show snackbar
@@ -1196,9 +1196,9 @@ function applyBundle(bundleType) {
 // Show bundle applied toast
 function showBundleToast(bundleType, count) {
     const messages = {
-        'fast-sale': `🔥 Выбрано ${count} самых просматриваемых`,
-        'premium': `💎 Выбрано ${count} премиум объявлений`,
-        'refresh': `🔄 Выбрано ${count} объявлений для обновления`
+        'fast-sale': `🔥 Selected ${count} most viewed`,
+        'premium': `💎 Selected ${count} premium listings`,
+        'refresh': `🔄 Selected ${count} listings to refresh`
     };
 
     // Create toast element
@@ -1247,12 +1247,12 @@ function updatePackageHealthBar() {
         if (remaining <= 1) {
             healthTip.innerHTML = `
                 <span class="tip-icon">⚠️</span>
-                <span class="tip-text" style="color: #B42525;">Остался последний слот!</span>
+                <span class="tip-text" style="color: #B42525;">Last slot remaining!</span>
             `;
         } else if (remaining <= 2) {
             healthTip.innerHTML = `
                 <span class="tip-icon">💡</span>
-                <span class="tip-text">Используйте на самые важные</span>
+                <span class="tip-text">Use on most important ones</span>
             `;
         }
     }
@@ -1614,16 +1614,16 @@ function selectStatus(value) {
     state.filters.status = value;
 
     const statusLabels = {
-        '': 'Все',
-        'active': 'Опубликованные',
-        'unpaid': 'Неоплаченные',
-        'pending': 'На проверке',
-        'hidden': 'Скрытые',
-        'rejected': 'Отклонённые',
-        'deleting': 'На удаление'
+        '': 'All',
+        'active': 'Published',
+        'unpaid': 'Unpaid',
+        'pending': 'Pending review',
+        'hidden': 'Hidden',
+        'rejected': 'Rejected',
+        'deleting': 'Pending deletion'
     };
 
-    document.getElementById('status-display').textContent = statusLabels[value] || 'Все';
+    document.getElementById('status-display').textContent = statusLabels[value] || 'All';
     closeStatusDropdown();
     updateDropdownSelections();
     updateStatusCounts();
