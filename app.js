@@ -929,7 +929,6 @@ function showPromotionSheet(listing, matchingPackage) {
     const previewEl = document.getElementById('sheet-listing-preview');
     const packageOption = document.getElementById('sheet-package-option');
     const walletOption = document.getElementById('sheet-wallet-option');
-    const promoSelector = document.getElementById('sheet-promo-selector');
 
     // Render listing preview
     previewEl.innerHTML = `
@@ -941,28 +940,25 @@ function showPromotionSheet(listing, matchingPackage) {
         </div>
     `;
 
-    // Show/hide package option based on matching package
+    // Show ONLY ONE option: package OR wallet
     if (matchingPackage) {
+        // Show only package option
         packageOption.style.display = 'block';
+        walletOption.style.display = 'none';
+
         document.getElementById('sheet-package-name').textContent = matchingPackage.name;
         document.getElementById('sheet-package-remaining').textContent =
             `${matchingPackage.total - matchingPackage.used}/${matchingPackage.total}`;
         document.getElementById('sheet-package-expiry').textContent = matchingPackage.expiryDate;
-
-        // Hide promo selector when package available (use package type)
-        promoSelector.style.display = 'none';
-        walletOption.querySelector('.sheet-option-header').style.display = 'flex';
     } else {
+        // Show only wallet option
         packageOption.style.display = 'none';
-        promoSelector.style.display = 'flex';
-        walletOption.querySelector('.sheet-option-header').style.display = 'flex';
+        walletOption.style.display = 'block';
+
+        // Update wallet balance and price
+        document.getElementById('sheet-wallet-balance').textContent = `€${walletBalance.toFixed(2)}`;
+        updateSheetPrice('vip');
     }
-
-    // Update wallet balance
-    document.getElementById('sheet-wallet-balance').textContent = `€${walletBalance.toFixed(2)}`;
-
-    // Update price
-    updateSheetPrice('vip');
 
     // Show sheet
     sheet.style.display = 'flex';
