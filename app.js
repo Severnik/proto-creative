@@ -679,6 +679,7 @@ let state = {
         promotion: '',
         keyword: '',
         location: '',
+        phone: '',
         priceFrom: '',
         priceTo: ''
     },
@@ -1645,6 +1646,7 @@ function resetFilters() {
         promotion: '',
         keyword: '',
         location: '',
+        phone: '',
         priceFrom: '',
         priceTo: ''
     };
@@ -1652,6 +1654,8 @@ function resetFilters() {
     document.getElementById('filter-keyword').value = '';
     document.getElementById('filter-price-from').value = '';
     document.getElementById('filter-price-to').value = '';
+    document.getElementById('filter-location-display').textContent = 'All Cyprus';
+    document.getElementById('filter-phone-display').textContent = 'All numbers';
 
     document.getElementById('category-display').textContent = 'All categories';
     document.getElementById('status-display').textContent = 'All status';
@@ -1660,6 +1664,78 @@ function resetFilters() {
     updateDropdownSelections();
     updateFilterBadge();
     updateAllListings();
+}
+
+// Location Picker
+function openLocationPicker() {
+    document.getElementById('location-picker-modal').style.display = 'flex';
+    updateLocationRadios();
+}
+
+function closeLocationPicker() {
+    document.getElementById('location-picker-modal').style.display = 'none';
+}
+
+function selectLocation(value) {
+    state.filters.location = value;
+
+    const locationNames = {
+        '': 'All Cyprus',
+        'limassol': 'Limassol',
+        'nicosia': 'Nicosia',
+        'paphos': 'Paphos',
+        'larnaca': 'Larnaca',
+        'famagusta': 'Famagusta',
+        'troodos': 'Troodos'
+    };
+
+    document.getElementById('filter-location-display').textContent = locationNames[value] || 'All Cyprus';
+    closeLocationPicker();
+}
+
+function updateLocationRadios() {
+    const locations = ['all', 'limassol', 'nicosia', 'paphos', 'larnaca', 'famagusta', 'troodos'];
+    locations.forEach(loc => {
+        const radio = document.getElementById(`loc-${loc}`);
+        if (radio) {
+            const isSelected = (loc === 'all' && !state.filters.location) ||
+                              (state.filters.location === loc);
+            radio.classList.toggle('selected', isSelected);
+        }
+    });
+}
+
+// Phone Picker
+function openPhonePicker() {
+    document.getElementById('phone-picker-modal').style.display = 'flex';
+    updatePhoneRadios();
+}
+
+function closePhonePicker() {
+    document.getElementById('phone-picker-modal').style.display = 'none';
+}
+
+function selectPhone(value) {
+    state.filters.phone = value;
+
+    document.getElementById('filter-phone-display').textContent = value || 'All numbers';
+    closePhonePicker();
+}
+
+function updatePhoneRadios() {
+    document.querySelectorAll('#phone-picker-modal .radio').forEach(radio => {
+        radio.classList.remove('selected');
+    });
+
+    if (!state.filters.phone) {
+        document.getElementById('phone-all').classList.add('selected');
+    } else if (state.filters.phone === '+357 99 123 456') {
+        document.getElementById('phone-1').classList.add('selected');
+    } else if (state.filters.phone === '+357 96 789 012') {
+        document.getElementById('phone-2').classList.add('selected');
+    } else if (state.filters.phone === '+357 95 345 678') {
+        document.getElementById('phone-3').classList.add('selected');
+    }
 }
 
 // Sort Modal

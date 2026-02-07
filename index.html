@@ -10,7 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=27">
+    <link rel="stylesheet" href="styles.css?v=28">
 </head>
 <body>
     <div id="app">
@@ -268,7 +268,7 @@
 
                 <div class="filter-section">
                     <label class="filter-label">Location</label>
-                    <div class="filter-dropdown-row">
+                    <div class="filter-dropdown-row" onclick="openLocationPicker()">
                         <span id="filter-location-display">All Cyprus</span>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
@@ -278,8 +278,8 @@
 
                 <div class="filter-section">
                     <label class="filter-label">Phone number</label>
-                    <div class="filter-dropdown-row">
-                        <span>All numbers</span>
+                    <div class="filter-dropdown-row" onclick="openPhonePicker()">
+                        <span id="filter-phone-display">All numbers</span>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
                         </svg>
@@ -289,14 +289,99 @@
                 <div class="filter-section">
                     <label class="filter-label">Price</label>
                     <div class="filter-price-row">
-                        <input type="text" id="filter-price-from" class="filter-input-half" placeholder="From">
-                        <input type="text" id="filter-price-to" class="filter-input-half" placeholder="To">
+                        <input type="number" id="filter-price-from" class="filter-input-half" placeholder="From">
+                        <input type="number" id="filter-price-to" class="filter-input-half" placeholder="To">
                     </div>
                 </div>
             </div>
 
             <div class="sticky-button">
                 <button class="primary-btn" onclick="applyFilters()">Apply</button>
+            </div>
+        </div>
+
+        <!-- Location Picker Modal -->
+        <div id="location-picker-modal" class="modal-overlay" style="display: none;">
+            <div class="modal-content picker-modal">
+                <div class="modal-header">
+                    <h2>Select location</h2>
+                    <button class="icon-btn" onclick="closeLocationPicker()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="#1D2023" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body picker-list">
+                    <div class="picker-option" onclick="selectLocation('')">
+                        <span>All Cyprus</span>
+                        <div class="radio" id="loc-all"></div>
+                    </div>
+                    <div class="picker-option" onclick="selectLocation('limassol')">
+                        <span>Limassol</span>
+                        <div class="radio" id="loc-limassol"></div>
+                    </div>
+                    <div class="picker-option" onclick="selectLocation('nicosia')">
+                        <span>Nicosia</span>
+                        <div class="radio" id="loc-nicosia"></div>
+                    </div>
+                    <div class="picker-option" onclick="selectLocation('paphos')">
+                        <span>Paphos</span>
+                        <div class="radio" id="loc-paphos"></div>
+                    </div>
+                    <div class="picker-option" onclick="selectLocation('larnaca')">
+                        <span>Larnaca</span>
+                        <div class="radio" id="loc-larnaca"></div>
+                    </div>
+                    <div class="picker-option" onclick="selectLocation('famagusta')">
+                        <span>Famagusta</span>
+                        <div class="radio" id="loc-famagusta"></div>
+                    </div>
+                    <div class="picker-option" onclick="selectLocation('troodos')">
+                        <span>Troodos</span>
+                        <div class="radio" id="loc-troodos"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone Picker Modal -->
+        <div id="phone-picker-modal" class="modal-overlay" style="display: none;">
+            <div class="modal-content picker-modal">
+                <div class="modal-header">
+                    <h2>Select phone number</h2>
+                    <button class="icon-btn" onclick="closePhonePicker()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="#1D2023" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body picker-list">
+                    <div class="picker-option" onclick="selectPhone('')">
+                        <span>All numbers</span>
+                        <div class="radio" id="phone-all"></div>
+                    </div>
+                    <div class="picker-option" onclick="selectPhone('+357 99 123 456')">
+                        <div class="phone-option-content">
+                            <span class="phone-number">+357 99 123 456</span>
+                            <span class="phone-label">Main</span>
+                        </div>
+                        <div class="radio" id="phone-1"></div>
+                    </div>
+                    <div class="picker-option" onclick="selectPhone('+357 96 789 012')">
+                        <div class="phone-option-content">
+                            <span class="phone-number">+357 96 789 012</span>
+                            <span class="phone-label">Work</span>
+                        </div>
+                        <div class="radio" id="phone-2"></div>
+                    </div>
+                    <div class="picker-option" onclick="selectPhone('+357 95 345 678')">
+                        <div class="phone-option-content">
+                            <span class="phone-number">+357 95 345 678</span>
+                            <span class="phone-label">Personal</span>
+                        </div>
+                        <div class="radio" id="phone-3"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -839,6 +924,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=27"></script>
+    <script src="app.js?v=28"></script>
 </body>
 </html>

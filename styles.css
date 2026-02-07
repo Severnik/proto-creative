@@ -1099,6 +1099,59 @@ html, body {
     flex: 1;
 }
 
+/* Picker Modal Styles */
+.picker-modal {
+    max-height: 70vh;
+}
+
+.picker-list {
+    padding: 8px 0;
+}
+
+.picker-option {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 0 20px;
+    transition: background 0.15s;
+}
+
+.picker-option:active {
+    background: #F5F5F5;
+}
+
+.picker-option span {
+    /* Body 1 Regular - 16px / 24px */
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #1D2023;
+}
+
+.phone-option-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.phone-number {
+    /* Body 1 Regular - 16px / 24px */
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #1D2023;
+}
+
+.phone-label {
+    /* Caption Regular - 12px / 16px */
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: #626C77;
+}
+
 /* Sort Options */
 .sort-option {
     height: 52px;
