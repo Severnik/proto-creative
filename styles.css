@@ -2692,6 +2692,7 @@ html, body {
     font-family: 'Inter', sans-serif;
     font-size: 16px;
     font-weight: 500;
+    line-height: 24px;
     color: #1D2023;
     margin-bottom: 2px;
 }
@@ -2699,7 +2700,9 @@ html, body {
 .sheet-option-subtitle {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
-    color: #6E7781;
+    font-weight: 500;
+    line-height: 20px;
+    color: #626C77;
 }
 
 .sheet-option-badge {
@@ -2745,13 +2748,16 @@ html, body {
 .sheet-detail-label {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
-    color: #6E7781;
+    font-weight: 400;
+    line-height: 20px;
+    color: #626C77;
 }
 
 .sheet-detail-value {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 500;
+    line-height: 20px;
     color: #1D2023;
 }
 
@@ -2818,7 +2824,7 @@ html, body {
     color: #0066FF;
 }
 
-/* Sheet Action Buttons - UI Kit Style */
+/* Sheet Action Buttons - UI Kit Style (Size 48) */
 .sheet-action-btn {
     width: 100%;
     height: 48px;
@@ -2827,9 +2833,14 @@ html, body {
     font-family: 'Inter', sans-serif;
     font-size: 16px;
     font-weight: 500;
+    line-height: 24px;
     border: none;
     cursor: pointer;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .sheet-action-btn.primary {
@@ -2842,7 +2853,14 @@ html, body {
 }
 
 .sheet-action-btn.primary:active {
-    background: #0F1012;
+    background: #1D2023;
+    transform: scale(0.98);
+}
+
+.sheet-action-btn.primary:disabled {
+    background: #F2F3F7;
+    color: #BBC1C7;
+    cursor: not-allowed;
 }
 
 .sheet-action-btn.secondary {
@@ -2856,4 +2874,11 @@ html, body {
 
 .sheet-action-btn.secondary:active {
     background: #BBC1C7;
+    transform: scale(0.98);
+}
+
+.sheet-action-btn.secondary:disabled {
+    background: #F2F3F7;
+    color: #BBC1C7;
+    cursor: not-allowed;
 }
