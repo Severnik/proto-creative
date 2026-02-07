@@ -10,7 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20">
+    <link rel="stylesheet" href="styles.css?v=21">
 </head>
 <body>
     <div id="app">
@@ -762,6 +762,83 @@
         </div>
     </div>
 
-    <script src="app.js?v=20"></script>
+    <!-- Promotion Bottom Sheet -->
+    <div id="promotion-bottom-sheet" class="bottom-sheet-overlay" style="display: none;">
+        <div class="bottom-sheet-backdrop" onclick="closePromotionSheet()"></div>
+        <div class="bottom-sheet">
+            <div class="bottom-sheet-handle"></div>
+
+            <!-- Listing Preview -->
+            <div class="sheet-listing-preview" id="sheet-listing-preview">
+                <!-- Will be injected -->
+            </div>
+
+            <!-- Package Option (shown when package available) -->
+            <div class="sheet-option package-option" id="sheet-package-option" style="display: none;">
+                <div class="sheet-option-header">
+                    <div class="sheet-option-icon package-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M20 7L12 3L4 7M20 7V17L12 21M20 7L12 11M12 21L4 17V7M12 21V11M4 7L12 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="sheet-option-info">
+                        <div class="sheet-option-title">Использовать пакет</div>
+                        <div class="sheet-option-subtitle" id="sheet-package-name">VIP на 5 дней</div>
+                    </div>
+                    <div class="sheet-option-badge free">Бесплатно</div>
+                </div>
+                <div class="sheet-option-details">
+                    <div class="sheet-detail-row">
+                        <span class="sheet-detail-label">Осталось в пакете:</span>
+                        <span class="sheet-detail-value" id="sheet-package-remaining">4/5</span>
+                    </div>
+                    <div class="sheet-detail-row">
+                        <span class="sheet-detail-label">Действует до:</span>
+                        <span class="sheet-detail-value" id="sheet-package-expiry">31 января</span>
+                    </div>
+                </div>
+                <button class="sheet-action-btn primary" onclick="applyPackagePromotion()">
+                    Применить из пакета
+                </button>
+            </div>
+
+            <!-- Wallet Option (shown when no package or as alternative) -->
+            <div class="sheet-option wallet-option" id="sheet-wallet-option">
+                <div class="sheet-option-header">
+                    <div class="sheet-option-icon wallet-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <rect x="2" y="6" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <path d="M16 13H18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M2 10H22" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="sheet-option-info">
+                        <div class="sheet-option-title">Оплатить из кошелька</div>
+                        <div class="sheet-option-subtitle">Баланс: <span id="sheet-wallet-balance">€25.00</span></div>
+                    </div>
+                    <div class="sheet-option-price" id="sheet-wallet-price">€2.50</div>
+                </div>
+                <div class="sheet-promo-type-selector" id="sheet-promo-selector">
+                    <button class="promo-type-btn active" data-type="vip" onclick="selectPromoType('vip')">
+                        <span class="promo-type-badge vip">VIP</span>
+                        <span class="promo-type-price">€2.50</span>
+                    </button>
+                    <button class="promo-type-btn" data-type="top" onclick="selectPromoType('top')">
+                        <span class="promo-type-badge top">TOP</span>
+                        <span class="promo-type-price">€1.50</span>
+                    </button>
+                    <button class="promo-type-btn" data-type="update" onclick="selectPromoType('update')">
+                        <span class="promo-type-label">Поднять</span>
+                        <span class="promo-type-price">€0.50</span>
+                    </button>
+                </div>
+                <button class="sheet-action-btn secondary" onclick="applyWalletPromotion()">
+                    Оплатить <span id="sheet-pay-amount">€2.50</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=21"></script>
 </body>
 </html>

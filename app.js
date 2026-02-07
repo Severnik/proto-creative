@@ -1,3 +1,50 @@
+// Mock data for packages
+const mockPackages = [
+    {
+        id: 1,
+        name: "VIP на 5 дней",
+        type: "vip",
+        category: "motors",
+        subcategory: "cars",
+        total: 5,
+        used: 1,
+        expiryDate: "31 января",
+        expiryWarning: true
+    },
+    {
+        id: 2,
+        name: "TOP на 5 дней",
+        type: "top",
+        category: "motors",
+        subcategory: "rentals",
+        total: 5,
+        used: 2,
+        expiryDate: "17 июля",
+        expiryWarning: false
+    },
+    {
+        id: 3,
+        name: "VIP на 7 дней",
+        type: "vip",
+        category: "property",
+        subcategory: "apartments",
+        total: 3,
+        used: 1,
+        expiryDate: "25 марта",
+        expiryWarning: false
+    }
+];
+
+// Wallet balance
+const walletBalance = 25.00;
+
+// Promo prices
+const promoPrices = {
+    vip: 2.50,
+    top: 1.50,
+    update: 0.50
+};
+
 // Mock data for listings
 const mockListings = [
     {
@@ -834,30 +881,206 @@ function getMetricIcon(type) {
     }
 }
 
+// Current promotion state for bottom sheet
+let currentPromoState = {
+    listingId: null,
+    listing: null,
+    matchingPackage: null,
+    selectedPromoType: 'vip'
+};
+
 // Open promotion flow for recommended listing
 function openRecommendationPromo(listingId) {
-    state.selectedListings.clear();
-    state.selectedListings.add(listingId);
-    updateSelectionUI();
-    navigateTo('screen-select-promotion');
+    const listing = mockListings.find(l => l.id === listingId);
+    if (!listing) return;
+
+    // Find matching package for this listing's category
+    const matchingPackage = findMatchingPackage(listing);
+
+    // Store state
+    currentPromoState = {
+        listingId: listingId,
+        listing: listing,
+        matchingPackage: matchingPackage,
+        selectedPromoType: 'vip'
+    };
+
+    // Show bottom sheet
+    showPromotionSheet(listing, matchingPackage);
 }
 
-// Apply suggestion (quick VIP)
-function applySuggestion(listingId) {
-    state.selectedListings.clear();
-    state.selectedListings.add(listingId);
-    updateSelectionUI();
-    navigateTo('screen-package-apply');
+// Find matching package for a listing
+function findMatchingPackage(listing) {
+    return mockPackages.find(pkg => {
+        // Check if package has remaining slots
+        if (pkg.used >= pkg.total) return false;
+        // Check if category matches
+        if (pkg.category !== listing.category) return false;
+        // Check if listing doesn't already have this promotion
+        if (pkg.type === 'vip' && listing.hasVip) return false;
+        if (pkg.type === 'top' && listing.hasTop) return false;
+        return true;
+    });
+}
 
-    // Auto-scroll to the listing
+// Show promotion bottom sheet
+function showPromotionSheet(listing, matchingPackage) {
+    const sheet = document.getElementById('promotion-bottom-sheet');
+    const previewEl = document.getElementById('sheet-listing-preview');
+    const packageOption = document.getElementById('sheet-package-option');
+    const walletOption = document.getElementById('sheet-wallet-option');
+    const promoSelector = document.getElementById('sheet-promo-selector');
+
+    // Render listing preview
+    previewEl.innerHTML = `
+        <img class="sheet-listing-image" src="${listing.image}" alt="${listing.title}">
+        <div class="sheet-listing-info">
+            <div class="sheet-listing-title">${listing.title}</div>
+            <div class="sheet-listing-price">${listing.priceDisplay}</div>
+            <div class="sheet-listing-category">${listing.location} · ${capitalizeFirst(listing.category)}</div>
+        </div>
+    `;
+
+    // Show/hide package option based on matching package
+    if (matchingPackage) {
+        packageOption.style.display = 'block';
+        document.getElementById('sheet-package-name').textContent = matchingPackage.name;
+        document.getElementById('sheet-package-remaining').textContent =
+            `${matchingPackage.total - matchingPackage.used}/${matchingPackage.total}`;
+        document.getElementById('sheet-package-expiry').textContent = matchingPackage.expiryDate;
+
+        // Hide promo selector when package available (use package type)
+        promoSelector.style.display = 'none';
+        walletOption.querySelector('.sheet-option-header').style.display = 'flex';
+    } else {
+        packageOption.style.display = 'none';
+        promoSelector.style.display = 'flex';
+        walletOption.querySelector('.sheet-option-header').style.display = 'flex';
+    }
+
+    // Update wallet balance
+    document.getElementById('sheet-wallet-balance').textContent = `€${walletBalance.toFixed(2)}`;
+
+    // Update price
+    updateSheetPrice('vip');
+
+    // Show sheet
+    sheet.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+// Close promotion sheet
+function closePromotionSheet() {
+    const sheet = document.getElementById('promotion-bottom-sheet');
+    sheet.style.display = 'none';
+    document.body.style.overflow = '';
+    currentPromoState = {
+        listingId: null,
+        listing: null,
+        matchingPackage: null,
+        selectedPromoType: 'vip'
+    };
+}
+
+// Select promo type in wallet option
+function selectPromoType(type) {
+    currentPromoState.selectedPromoType = type;
+
+    // Update UI
+    document.querySelectorAll('.promo-type-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.type === type);
+    });
+
+    updateSheetPrice(type);
+}
+
+// Update price display
+function updateSheetPrice(type) {
+    const price = promoPrices[type];
+    document.getElementById('sheet-wallet-price').textContent = `€${price.toFixed(2)}`;
+    document.getElementById('sheet-pay-amount').textContent = `€${price.toFixed(2)}`;
+}
+
+// Apply promotion from package
+function applyPackagePromotion() {
+    const { listing, matchingPackage } = currentPromoState;
+    if (!listing || !matchingPackage) return;
+
+    // Update package usage
+    matchingPackage.used++;
+
+    // Apply promotion to listing
+    if (matchingPackage.type === 'vip') {
+        listing.hasVip = true;
+        listing.vipText = `VIP until ${matchingPackage.expiryDate}`;
+    } else if (matchingPackage.type === 'top') {
+        listing.hasTop = true;
+    }
+
+    // Close sheet and show success
+    closePromotionSheet();
+    showPromotionSuccess(listing, matchingPackage.type, true, matchingPackage);
+
+    // Re-render listings and recommendations
+    renderListings('main');
+    renderRecommendations();
+}
+
+// Apply promotion from wallet
+function applyWalletPromotion() {
+    const { listing, selectedPromoType } = currentPromoState;
+    if (!listing) return;
+
+    const price = promoPrices[selectedPromoType];
+
+    // Apply promotion to listing
+    if (selectedPromoType === 'vip') {
+        listing.hasVip = true;
+        listing.vipText = "VIP на 5 дней";
+    } else if (selectedPromoType === 'top') {
+        listing.hasTop = true;
+    }
+
+    // Close sheet and show success
+    closePromotionSheet();
+    showPromotionSuccess(listing, selectedPromoType, false, null, price);
+
+    // Re-render listings and recommendations
+    renderListings('main');
+    renderRecommendations();
+}
+
+// Show promotion success message
+function showPromotionSuccess(listing, promoType, fromPackage, pkg, price) {
+    const typeLabels = { vip: 'VIP', top: 'TOP', update: 'Поднятие' };
+    const typeLabel = typeLabels[promoType] || promoType.toUpperCase();
+
+    let message;
+    if (fromPackage && pkg) {
+        message = `${typeLabel} применён из пакета. Осталось: ${pkg.total - pkg.used}/${pkg.total}`;
+    } else {
+        message = `${typeLabel} применён. Списано €${price.toFixed(2)} с кошелька`;
+    }
+
+    // Show snackbar
+    const snackbar = document.getElementById('snackbar');
+    const snackbarText = document.getElementById('snackbar-text');
+    snackbarText.textContent = message;
+    snackbar.classList.add('show');
+
     setTimeout(() => {
-        const card = document.querySelector(`#listings-package .listing-card[data-id="${listingId}"]`);
-        if (card) {
-            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            card.classList.add('highlight');
-            setTimeout(() => card.classList.remove('highlight'), 2000);
-        }
-    }, 300);
+        snackbar.classList.remove('show');
+    }, 4000);
+}
+
+// Helper: Capitalize first letter
+function capitalizeFirst(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// Apply suggestion (quick VIP) - legacy, redirect to new flow
+function applySuggestion(listingId) {
+    openRecommendationPromo(listingId);
 }
 
 // Apply bundle strategy
