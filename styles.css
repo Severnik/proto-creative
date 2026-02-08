@@ -1763,6 +1763,31 @@ html, body {
     background: #0d4d28 !important;
 }
 
+/* Combined payment styles */
+.confirm-free {
+    color: #136938;
+}
+
+.confirm-paid {
+    color: #B42525;
+}
+
+.confirm-divider {
+    height: 1px;
+    background: #E0E0E0;
+    margin: 4px 0;
+}
+
+.confirm-total-row {
+    padding-top: 4px;
+}
+
+.confirm-total {
+    font-size: 16px;
+    font-weight: 600;
+    color: #B42525;
+}
+
 /* ========================================
    Progress Bar Section (Figma Style)
    ======================================== */

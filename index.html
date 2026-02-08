@@ -10,7 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=34">
+    <link rel="stylesheet" href="styles.css?v=35">
 </head>
 <body>
     <div id="app">
@@ -746,13 +746,32 @@
                 <div class="confirm-modal-body">
                     <h2 class="confirm-title">Apply VIP to <span id="confirm-count">3</span> ads?</h2>
                     <div class="confirm-details">
-                        <div class="confirm-row">
-                            <span class="confirm-label">Package:</span>
-                            <span class="confirm-value" id="confirm-package">VIP for 5 days</span>
+                        <!-- Standard package info -->
+                        <div id="confirm-package-section">
+                            <div class="confirm-row">
+                                <span class="confirm-label">Package:</span>
+                                <span class="confirm-value" id="confirm-package">VIP for 5 days</span>
+                            </div>
+                            <div class="confirm-row">
+                                <span class="confirm-label">Remaining after:</span>
+                                <span class="confirm-value" id="confirm-remaining">2/5</span>
+                            </div>
                         </div>
-                        <div class="confirm-row">
-                            <span class="confirm-label">Remaining after:</span>
-                            <span class="confirm-value" id="confirm-remaining">2/5</span>
+                        <!-- Combined payment info (shown when exceeds package) -->
+                        <div id="confirm-combined-section" style="display: none;">
+                            <div class="confirm-row">
+                                <span class="confirm-label">From package:</span>
+                                <span class="confirm-value confirm-free" id="confirm-from-package">5 ads (free)</span>
+                            </div>
+                            <div class="confirm-row">
+                                <span class="confirm-label">From wallet:</span>
+                                <span class="confirm-value confirm-paid" id="confirm-from-wallet">27 ads (€67.50)</span>
+                            </div>
+                            <div class="confirm-divider"></div>
+                            <div class="confirm-row confirm-total-row">
+                                <span class="confirm-label">Total to pay:</span>
+                                <span class="confirm-value confirm-total" id="confirm-total-pay">€67.50</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -940,6 +959,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=34"></script>
+    <script src="app.js?v=35"></script>
 </body>
 </html>

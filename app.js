@@ -1899,16 +1899,48 @@ function applyPromotion(type) {
 
     state.pendingPromotionType = type;
 
+    // Calculate package availability
+    const packageAvailable = packageConfig.totalSlots - packageConfig.usedSlots;
+    const exceedsPackage = count > packageAvailable;
+    const fromPackage = Math.min(count, packageAvailable);
+    const fromWallet = count - fromPackage;
+    const walletCost = fromWallet * promoPrices.vip;
+
     // Update confirmation dialog
     const confirmCount = document.getElementById('confirm-count');
-    const confirmPackage = document.getElementById('confirm-package');
-    const confirmRemaining = document.getElementById('confirm-remaining');
+    const confirmPackageSection = document.getElementById('confirm-package-section');
+    const confirmCombinedSection = document.getElementById('confirm-combined-section');
 
     if (confirmCount) confirmCount.textContent = count;
-    if (confirmPackage) confirmPackage.textContent = packageConfig.name;
 
-    const remaining = packageConfig.totalSlots - packageConfig.usedSlots - count;
-    if (confirmRemaining) confirmRemaining.textContent = `${Math.max(0, remaining)}/${packageConfig.totalSlots}`;
+    if (exceedsPackage && packageAvailable > 0) {
+        // Show combined payment info
+        confirmPackageSection.style.display = 'none';
+        confirmCombinedSection.style.display = 'block';
+
+        document.getElementById('confirm-from-package').textContent = `${fromPackage} ads (free)`;
+        document.getElementById('confirm-from-wallet').textContent = `${fromWallet} ads (€${walletCost.toFixed(2)})`;
+        document.getElementById('confirm-total-pay').textContent = `€${walletCost.toFixed(2)}`;
+    } else if (packageAvailable === 0) {
+        // No package available, all from wallet
+        confirmPackageSection.style.display = 'none';
+        confirmCombinedSection.style.display = 'block';
+
+        document.getElementById('confirm-from-package').textContent = `0 ads (no package)`;
+        document.getElementById('confirm-from-wallet').textContent = `${count} ads (€${(count * promoPrices.vip).toFixed(2)})`;
+        document.getElementById('confirm-total-pay').textContent = `€${(count * promoPrices.vip).toFixed(2)}`;
+    } else {
+        // All fits in package
+        confirmPackageSection.style.display = 'block';
+        confirmCombinedSection.style.display = 'none';
+
+        const confirmPackage = document.getElementById('confirm-package');
+        const confirmRemaining = document.getElementById('confirm-remaining');
+
+        if (confirmPackage) confirmPackage.textContent = packageConfig.name;
+        const remaining = packageAvailable - count;
+        if (confirmRemaining) confirmRemaining.textContent = `${remaining}/${packageConfig.totalSlots}`;
+    }
 
     // Show confirmation modal
     document.getElementById('confirm-modal').style.display = 'flex';
