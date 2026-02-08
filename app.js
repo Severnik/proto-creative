@@ -1184,10 +1184,12 @@ function applyBundle(bundleType) {
     }
 
     selectedIds.forEach(id => state.selectedListings.add(id));
-    updateSelectionUI();
 
-    // Navigate to appropriate screen
-    navigateTo('screen-package-apply');
+    // Navigate to appropriate screen with preserved selection
+    navigateTo('screen-package-apply', true);
+
+    // Update UI after navigation (with preserved selection)
+    updateSelectionUI();
 
     // Show toast with bundle info
     showBundleToast(bundleType, selectedIds.length);
@@ -1297,7 +1299,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Navigation
-function navigateTo(screenId) {
+function navigateTo(screenId, preserveSelection = false) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
         screen.style.display = 'none';
@@ -1307,15 +1309,19 @@ function navigateTo(screenId) {
     targetScreen.classList.add('active');
     state.currentScreen = screenId;
 
-    // Reset selection when navigating to any screen
-    state.selectedListings.clear();
+    // Reset selection when navigating to any screen (unless preserveSelection is true)
+    if (!preserveSelection) {
+        state.selectedListings.clear();
+    }
 
-    // Reset all "Select all" checkboxes
-    document.querySelectorAll('[id^="select-all-"]').forEach(checkbox => {
-        checkbox.checked = false;
-    });
+    // Reset all "Select all" checkboxes (unless preserveSelection is true)
+    if (!preserveSelection) {
+        document.querySelectorAll('[id^="select-all-"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    }
 
-    // Re-render listings to clear checkbox states
+    // Re-render listings (with preserved or cleared checkbox states)
     renderListings('listings-main', mockListings);
     renderListings('listings-package', mockListings.filter(l => l.status === 'active'));
     renderListings('listings-wallet', mockListings.filter(l => l.status === 'active'));
