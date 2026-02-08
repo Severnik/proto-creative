@@ -1901,27 +1901,128 @@ function applyPromotion(type) {
 
     // Calculate package availability
     const packageAvailable = packageConfig.totalSlots - packageConfig.usedSlots;
-    const exceedsPackage = count > packageAvailable;
-    const fromPackage = Math.min(count, packageAvailable);
-    const fromWallet = count - fromPackage;
+    const exceedsPackage = count > packageAvailable && packageAvailable > 0;
+
+    if (exceedsPackage) {
+        // Show package limit bottom sheet with options
+        showPackageLimitSheet(count, packageAvailable);
+        return;
+    }
+
+    // All fits in package or no package - show standard confirmation
+    showStandardConfirmation(count, packageAvailable);
+}
+
+// Show package limit bottom sheet
+function showPackageLimitSheet(count, packageAvailable) {
+    const fromWallet = count - packageAvailable;
     const walletCost = fromWallet * promoPrices.vip;
 
-    // Update confirmation dialog
+    // Update sheet content
+    document.getElementById('limit-selected-count').textContent = count;
+    document.getElementById('limit-package-available').textContent = packageAvailable;
+    document.getElementById('limit-option-package-count').textContent = packageAvailable;
+    document.getElementById('limit-option-package-free').textContent = packageAvailable;
+    document.getElementById('limit-option-wallet-count').textContent = fromWallet;
+    document.getElementById('limit-option-wallet-price').textContent = walletCost.toFixed(2);
+    document.getElementById('limit-option-trim-count').textContent = packageAvailable;
+
+    // Show bottom sheet
+    document.getElementById('package-limit-sheet').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+// Close package limit sheet
+function closePackageLimitSheet() {
+    document.getElementById('package-limit-sheet').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+// Option 1: Apply only package slots (top performers)
+function applyPackageOnly() {
+    const packageAvailable = packageConfig.totalSlots - packageConfig.usedSlots;
+
+    // Get top N listings by views from selected
+    const selectedIds = Array.from(state.selectedListings);
+    const selectedListings = mockListings.filter(l => selectedIds.includes(l.id));
+    const topListings = selectedListings
+        .sort((a, b) => b.views - a.views)
+        .slice(0, packageAvailable);
+
+    // Update selection to only top performers
+    state.selectedListings.clear();
+    topListings.forEach(l => state.selectedListings.add(l.id));
+
+    closePackageLimitSheet();
+
+    // Re-render and show toast
+    renderListings('listings-package', mockListings.filter(l => l.status === 'active'));
+    updateSelectionUI();
+    showActionToast(`Selected top ${packageAvailable} most viewed ads`);
+
+    // Show standard confirmation
+    showStandardConfirmation(packageAvailable, packageAvailable);
+}
+
+// Option 2: Apply with wallet payment for extra
+function applyWithWallet() {
+    const count = state.selectedListings.size;
+    const packageAvailable = packageConfig.totalSlots - packageConfig.usedSlots;
+    const fromWallet = count - packageAvailable;
+    const walletCost = fromWallet * promoPrices.vip;
+
+    closePackageLimitSheet();
+
+    // Show combined confirmation
     const confirmCount = document.getElementById('confirm-count');
     const confirmPackageSection = document.getElementById('confirm-package-section');
     const confirmCombinedSection = document.getElementById('confirm-combined-section');
 
     if (confirmCount) confirmCount.textContent = count;
 
-    if (exceedsPackage && packageAvailable > 0) {
-        // Show combined payment info
-        confirmPackageSection.style.display = 'none';
-        confirmCombinedSection.style.display = 'block';
+    confirmPackageSection.style.display = 'none';
+    confirmCombinedSection.style.display = 'block';
 
-        document.getElementById('confirm-from-package').textContent = `${fromPackage} ads (free)`;
-        document.getElementById('confirm-from-wallet').textContent = `${fromWallet} ads (€${walletCost.toFixed(2)})`;
-        document.getElementById('confirm-total-pay').textContent = `€${walletCost.toFixed(2)}`;
-    } else if (packageAvailable === 0) {
+    document.getElementById('confirm-from-package').textContent = `${packageAvailable} ads (free)`;
+    document.getElementById('confirm-from-wallet').textContent = `${fromWallet} ads (€${walletCost.toFixed(2)})`;
+    document.getElementById('confirm-total-pay').textContent = `€${walletCost.toFixed(2)}`;
+
+    document.getElementById('confirm-modal').style.display = 'flex';
+}
+
+// Option 3: Trim selection to package limit
+function trimSelectionToLimit() {
+    const packageAvailable = packageConfig.totalSlots - packageConfig.usedSlots;
+
+    // Get top N listings by views from selected
+    const selectedIds = Array.from(state.selectedListings);
+    const selectedListings = mockListings.filter(l => selectedIds.includes(l.id));
+    const topListings = selectedListings
+        .sort((a, b) => b.views - a.views)
+        .slice(0, packageAvailable);
+
+    // Update selection
+    state.selectedListings.clear();
+    topListings.forEach(l => state.selectedListings.add(l.id));
+
+    closePackageLimitSheet();
+
+    // Re-render listings
+    renderListings('listings-package', mockListings.filter(l => l.status === 'active'));
+    updateSelectionUI();
+
+    showActionToast(`Trimmed to ${packageAvailable} most viewed ads`);
+}
+
+// Show standard confirmation dialog
+function showStandardConfirmation(count, packageAvailable) {
+    const confirmCount = document.getElementById('confirm-count');
+    const confirmPackageSection = document.getElementById('confirm-package-section');
+    const confirmCombinedSection = document.getElementById('confirm-combined-section');
+
+    if (confirmCount) confirmCount.textContent = count;
+
+    if (packageAvailable === 0) {
         // No package available, all from wallet
         confirmPackageSection.style.display = 'none';
         confirmCombinedSection.style.display = 'block';
@@ -1942,7 +2043,6 @@ function applyPromotion(type) {
         if (confirmRemaining) confirmRemaining.textContent = `${remaining}/${packageConfig.totalSlots}`;
     }
 
-    // Show confirmation modal
     document.getElementById('confirm-modal').style.display = 'flex';
 }
 

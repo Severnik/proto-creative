@@ -3031,3 +3031,157 @@ html, body {
     color: #BBC1C7;
     cursor: not-allowed;
 }
+
+/* ========================================
+   Package Limit Bottom Sheet
+   ======================================== */
+
+.limit-sheet {
+    padding: 8px 16px 24px;
+}
+
+.limit-sheet-header {
+    text-align: center;
+    padding: 16px 0;
+}
+
+.limit-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+}
+
+.limit-icon.warning {
+    background: #FFF8E1;
+}
+
+.limit-sheet-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1D2023;
+    margin: 0 0 8px;
+}
+
+.limit-sheet-subtitle {
+    font-size: 14px;
+    color: #626C77;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.limit-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.limit-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 12px;
+    background: #F8F9FA;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.limit-option:hover {
+    background: #F2F3F7;
+    border-color: #E0E0E0;
+}
+
+.limit-option:active {
+    transform: scale(0.98);
+}
+
+.limit-option-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.limit-option-icon.package {
+    background: #E8F5E9;
+    color: #136938;
+}
+
+.limit-option-icon.wallet {
+    background: #FFF3E0;
+    color: #F57C00;
+}
+
+.limit-option-icon.trim {
+    background: #F3E5F5;
+    color: #7B1FA2;
+}
+
+.limit-option-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.limit-option-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1D2023;
+    margin-bottom: 2px;
+}
+
+.limit-option-desc {
+    font-size: 13px;
+    color: #626C77;
+}
+
+.limit-option-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.limit-option-badge.free {
+    background: #E8F5E9;
+    color: #136938;
+}
+
+.limit-option-price {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1D2023;
+}
+
+.limit-option-arrow {
+    color: #626C77;
+}
+
+.limit-cancel-btn {
+    width: 100%;
+    height: 48px;
+    background: #F2F3F7;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #626C77;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.limit-cancel-btn:hover {
+    background: #E8E8E8;
+}
+
+.limit-cancel-btn:active {
+    transform: scale(0.98);
+}

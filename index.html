@@ -10,7 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=35">
+    <link rel="stylesheet" href="styles.css?v=36">
 </head>
 <body>
     <div id="app">
@@ -959,6 +959,76 @@
         </div>
     </div>
 
-    <script src="app.js?v=35"></script>
+    <!-- Package Limit Bottom Sheet -->
+    <div id="package-limit-sheet" class="bottom-sheet-overlay" style="display: none;">
+        <div class="bottom-sheet-backdrop" onclick="closePackageLimitSheet()"></div>
+        <div class="bottom-sheet-content limit-sheet">
+            <div class="sheet-handle"></div>
+
+            <div class="limit-sheet-header">
+                <div class="limit-icon warning">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#FFAB00" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3 class="limit-sheet-title">Package limit exceeded</h3>
+                <p class="limit-sheet-subtitle">You selected <span id="limit-selected-count">32</span> ads, but only <span id="limit-package-available">5</span> slots available in package</p>
+            </div>
+
+            <div class="limit-options">
+                <!-- Option 1: Use package only -->
+                <div class="limit-option" onclick="applyPackageOnly()">
+                    <div class="limit-option-icon package">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M20 7L12 3L4 7M20 7V17L12 21M20 7L12 11M12 21L4 17V7M12 21V11M4 7L12 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="limit-option-info">
+                        <div class="limit-option-title">Use package only</div>
+                        <div class="limit-option-desc">Apply to <span id="limit-option-package-count">5</span> most viewed ads</div>
+                    </div>
+                    <div class="limit-option-badge free">Free</div>
+                </div>
+
+                <!-- Option 2: Pay for extra from wallet -->
+                <div class="limit-option" onclick="applyWithWallet()">
+                    <div class="limit-option-icon wallet">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <rect x="2" y="6" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <path d="M16 13H18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M2 10H22" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="limit-option-info">
+                        <div class="limit-option-title">Pay for extra ads</div>
+                        <div class="limit-option-desc"><span id="limit-option-package-free">5</span> free + <span id="limit-option-wallet-count">27</span> from wallet</div>
+                    </div>
+                    <div class="limit-option-price">€<span id="limit-option-wallet-price">67.50</span></div>
+                </div>
+
+                <!-- Option 3: Trim selection -->
+                <div class="limit-option" onclick="trimSelectionToLimit()">
+                    <div class="limit-option-icon trim">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M4 7H20M10 11V17M14 11V17M5 7L6 19C6 20.1046 6.89543 21 8 21H16C17.1046 21 18 20.1046 18 19L19 7M9 7V4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="limit-option-info">
+                        <div class="limit-option-title">Select only <span id="limit-option-trim-count">5</span> ads</div>
+                        <div class="limit-option-desc">Keep top performers, remove the rest</div>
+                    </div>
+                    <div class="limit-option-arrow">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M9 18L15 12L9 6" stroke="#626C77" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <button class="limit-cancel-btn" onclick="closePackageLimitSheet()">Cancel</button>
+        </div>
+    </div>
+
+    <script src="app.js?v=36"></script>
 </body>
 </html>
