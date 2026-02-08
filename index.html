@@ -10,7 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=31">
+    <link rel="stylesheet" href="styles.css?v=32">
 </head>
 <body>
     <div id="app">
@@ -653,21 +653,23 @@
                 </div>
             </div>
 
-            <div class="sort-control">
-                <div class="select-all">
-                    <input type="checkbox" id="select-all-package" class="checkbox">
-                    <label for="select-all-package">Select all</label>
+            <div class="scrollable-content">
+                <div class="sort-control">
+                    <div class="select-all">
+                        <input type="checkbox" id="select-all-package" class="checkbox">
+                        <label for="select-all-package">Select all</label>
+                    </div>
+                    <div class="sorting" onclick="openSortModal()">
+                        <span>Sort</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 9L12 15L18 9" stroke="#1D2023" stroke-width="2"/>
+                        </svg>
+                    </div>
                 </div>
-                <div class="sorting" onclick="openSortModal()">
-                    <span>Sort</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M6 9L12 15L18 9" stroke="#1D2023" stroke-width="2"/>
-                    </svg>
-                </div>
-            </div>
 
-            <div class="listings-list" id="listings-package">
-                <!-- Listings will be injected here -->
+                <div class="listings-list" id="listings-package">
+                    <!-- Listings will be injected here -->
+                </div>
             </div>
 
             <div class="sticky-button">
@@ -712,21 +714,23 @@
                 </div>
             </div>
 
-            <div class="sort-control">
-                <div class="select-all">
-                    <input type="checkbox" id="select-all-wallet" class="checkbox">
-                    <label for="select-all-wallet">Select all</label>
+            <div class="scrollable-content">
+                <div class="sort-control">
+                    <div class="select-all">
+                        <input type="checkbox" id="select-all-wallet" class="checkbox">
+                        <label for="select-all-wallet">Select all</label>
+                    </div>
+                    <div class="sorting">
+                        <span>Sort</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 9L12 15L18 9" stroke="#1D2023" stroke-width="2"/>
+                        </svg>
+                    </div>
                 </div>
-                <div class="sorting">
-                    <span>Sort</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M6 9L12 15L18 9" stroke="#1D2023" stroke-width="2"/>
-                    </svg>
-                </div>
-            </div>
 
-            <div class="listings-list" id="listings-wallet">
-                <!-- Listings will be injected here -->
+                <div class="listings-list" id="listings-wallet">
+                    <!-- Listings will be injected here -->
+                </div>
             </div>
 
             <div class="sticky-button">
@@ -936,6 +940,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=31"></script>
+    <script src="app.js?v=32"></script>
 </body>
 </html>
