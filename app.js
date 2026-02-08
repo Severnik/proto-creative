@@ -1341,6 +1341,13 @@ function renderListings(containerId, listings) {
     // Apply sort
     filteredListings = applySortToListings(filteredListings);
 
+    // Move selected listings to the top
+    if (state.selectedListings.size > 0) {
+        const selected = filteredListings.filter(l => state.selectedListings.has(l.id));
+        const unselected = filteredListings.filter(l => !state.selectedListings.has(l.id));
+        filteredListings = [...selected, ...unselected];
+    }
+
     if (filteredListings.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
