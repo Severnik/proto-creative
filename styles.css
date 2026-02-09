@@ -3348,15 +3348,11 @@ html, body {
     color: #136938;
 }
 
+/* promo-success-btn extends primary-btn with green color */
 .promo-success-btn {
-    width: 100%;
-    height: 48px;
     background: #136938;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
 }
 
-.promo-success-btn:hover {
+.promo-success-btn:active {
     background: #0d4d28;
 }
