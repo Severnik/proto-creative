@@ -1117,27 +1117,47 @@ function applyWalletPromotion() {
     renderRecommendations();
 }
 
-// Show promotion success message
+// Show promotion success modal
 function showPromotionSuccess(listing, promoType, fromPackage, pkg, price) {
     const typeLabels = { vip: 'VIP', top: 'TOP', update: 'Update' };
     const typeLabel = typeLabels[promoType] || promoType.toUpperCase();
 
-    let message;
-    if (fromPackage && pkg) {
-        message = `${typeLabel} applied from package. Remaining: ${pkg.total - pkg.used}/${pkg.total}`;
-    } else {
-        message = `${typeLabel} applied. €${price.toFixed(2)} deducted from wallet`;
+    // Set success message based on promo type
+    const messages = {
+        vip: 'VIP activated — expect up to 5x more views in the next 24 hours',
+        top: 'TOP activated — your ad is now first in search results',
+        update: 'Ad refreshed — moved to the top of the list'
+    };
+
+    const successMessage = document.getElementById('promo-success-message');
+    if (successMessage) {
+        successMessage.textContent = messages[promoType] || `${typeLabel} applied successfully!`;
     }
 
-    // Show snackbar
-    const snackbar = document.getElementById('snackbar');
-    const snackbarText = document.getElementById('snackbar-text');
-    snackbarText.textContent = message;
-    snackbar.classList.add('show');
+    // Set listing preview
+    const listingPreview = document.getElementById('promo-success-listing');
+    if (listingPreview && listing) {
+        const badgeType = promoType === 'top' ? 'TOP' : 'VIP';
+        listingPreview.innerHTML = `
+            <img src="${listing.image}" alt="${listing.title}">
+            <div class="promo-success-listing-info">
+                <div class="promo-success-listing-title">${listing.title}</div>
+                <span class="promo-success-listing-badge">
+                    <span>⭐</span> ${badgeType} Active
+                </span>
+            </div>
+        `;
+    }
 
-    setTimeout(() => {
-        snackbar.classList.remove('show');
-    }, 4000);
+    // Show modal
+    document.getElementById('promo-success-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+// Close promo success modal
+function closePromoSuccessModal() {
+    document.getElementById('promo-success-modal').style.display = 'none';
+    document.body.style.overflow = '';
 }
 
 // Helper: Capitalize first letter

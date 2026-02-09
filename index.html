@@ -10,7 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=37">
+    <link rel="stylesheet" href="styles.css?v=38">
 </head>
 <body>
     <div id="app">
@@ -1029,6 +1029,41 @@
         </div>
     </div>
 
-    <script src="app.js?v=37"></script>
+    <!-- Promotion Success Modal -->
+    <div id="promo-success-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content promo-success-modal">
+            <div class="promo-success-animation">
+                <div class="success-rocket">🚀</div>
+                <div class="success-sparkles">
+                    <span class="sparkle">✨</span>
+                    <span class="sparkle">⭐</span>
+                    <span class="sparkle">✨</span>
+                </div>
+            </div>
+            <h2 class="promo-success-title">Your ad is now on top!</h2>
+            <p class="promo-success-subtitle" id="promo-success-message">VIP activated — expect up to 5x more views in the next 24 hours</p>
+
+            <div class="promo-success-listing" id="promo-success-listing">
+                <!-- Listing preview will be injected here -->
+            </div>
+
+            <div class="promo-success-stats">
+                <div class="success-stat">
+                    <span class="stat-icon">👀</span>
+                    <span class="stat-text">+280% average views</span>
+                </div>
+                <div class="success-stat">
+                    <span class="stat-icon">⚡</span>
+                    <span class="stat-text">3x faster sale</span>
+                </div>
+            </div>
+
+            <button class="primary-btn promo-success-btn" onclick="closePromoSuccessModal()">
+                Great, thanks!
+            </button>
+        </div>
+    </div>
+
+    <script src="app.js?v=38"></script>
 </body>
 </html>

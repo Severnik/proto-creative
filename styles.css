@@ -3198,3 +3198,165 @@ html, body {
 .limit-cancel-btn:active {
     transform: scale(0.98);
 }
+
+/* ========================================
+   Promotion Success Modal
+   ======================================== */
+
+.promo-success-modal {
+    max-width: 340px;
+    border-radius: 20px;
+    padding: 32px 24px 24px;
+    text-align: center;
+    animation: successPopIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes successPopIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.promo-success-animation {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.success-rocket {
+    font-size: 56px;
+    animation: rocketBounce 0.6s ease-out;
+}
+
+@keyframes rocketBounce {
+    0% { transform: translateY(30px) scale(0.5); opacity: 0; }
+    50% { transform: translateY(-10px) scale(1.1); }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.success-sparkles {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.sparkle {
+    font-size: 20px;
+    animation: sparkleFloat 1.5s ease-in-out infinite;
+}
+
+.sparkle:nth-child(1) { animation-delay: 0s; }
+.sparkle:nth-child(2) { animation-delay: 0.3s; }
+.sparkle:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes sparkleFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    50% { transform: translateY(-8px) rotate(10deg); opacity: 0.7; }
+}
+
+.promo-success-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1D2023;
+    margin: 0 0 8px;
+}
+
+.promo-success-subtitle {
+    font-size: 14px;
+    color: #626C77;
+    margin: 0 0 20px;
+    line-height: 1.4;
+}
+
+.promo-success-listing {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #F8F9FA;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.promo-success-listing img {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.promo-success-listing-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.promo-success-listing-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1D2023;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.promo-success-listing-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+.promo-success-stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.success-stat {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    background: #E8F5E9;
+    border-radius: 10px;
+}
+
+.stat-icon {
+    font-size: 16px;
+}
+
+.stat-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: #136938;
+}
+
+.promo-success-btn {
+    width: 100%;
+    height: 48px;
+    background: #136938;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.promo-success-btn:hover {
+    background: #0d4d28;
+}
