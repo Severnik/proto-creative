@@ -3356,3 +3356,491 @@ html, body {
 .promo-success-btn:active {
     background: #0d4d28;
 }
+
+/* ========================================
+   STORY ON MAIN PAGE - Promotion Product
+   ======================================== */
+
+/* Story Section Header */
+.story-section {
+    position: relative;
+}
+
+.story-section-header-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.story-new-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    background: linear-gradient(135deg, #0066FF 0%, #3D8BFF 100%);
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+/* Story Promo Card on B2 */
+.story-promo-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.08), 0px 4px 16px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+}
+
+.story-promo-card:active {
+    transform: scale(0.98);
+}
+
+/* Story Circles Preview */
+.story-promo-visual {
+    padding: 16px 16px 12px;
+    background: linear-gradient(180deg, #F8F9FF 0%, #FFFFFF 100%);
+}
+
+.story-circles-preview {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    justify-content: center;
+}
+
+.story-circle-mini {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.story-circle-mini.placeholder img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid #E0E0E0;
+    object-fit: cover;
+    opacity: 0.4;
+}
+
+.story-circle-mini.yours {
+    position: relative;
+}
+
+.story-circle-plus {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0066FF 0%, #3D8BFF 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.35);
+}
+
+.story-circle-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: #0066FF;
+    white-space: nowrap;
+}
+
+/* Story Promo Info */
+.story-promo-info {
+    padding: 12px 16px 16px;
+}
+
+.story-promo-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.story-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #136938;
+}
+
+.story-promo-pricing {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.story-price-from {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1D2023;
+}
+
+/* ========================================
+   Story Apply Screen
+   ======================================== */
+
+/* Story Preview Banner */
+.story-preview-banner {
+    background: linear-gradient(180deg, #F2F3F7 0%, #FFFFFF 100%);
+    padding: 16px;
+}
+
+.story-preview-mockup {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 16px 12px 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.story-mockup-bar {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.story-mockup-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.story-circle-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.story-circle-ring {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    padding: 3px;
+    background: linear-gradient(135deg, #0066FF 0%, #3D8BFF 50%, #00D4FF 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.story-circle-ring.ghost {
+    background: #E2E5EB;
+}
+
+.story-circle-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #F2F3F7;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.story-circle-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.story-circle-img.ghost-img {
+    background: #E2E5EB;
+}
+
+.story-circle-name {
+    font-size: 10px;
+    font-weight: 500;
+    color: #1D2023;
+    max-width: 60px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+.story-circle-name.ghost-name {
+    width: 40px;
+    height: 8px;
+    background: #E2E5EB;
+    border-radius: 4px;
+}
+
+.story-circle-slot.active .story-circle-ring {
+    animation: storyRingPulse 2s ease-in-out infinite;
+}
+
+@keyframes storyRingPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 102, 255, 0.3); }
+    50% { box-shadow: 0 0 0 6px rgba(0, 102, 255, 0); }
+}
+
+.story-mockup-label {
+    display: block;
+    text-align: center;
+    font-size: 11px;
+    color: #949494;
+    margin-top: 4px;
+}
+
+/* Duration Picker */
+.story-duration-section {
+    padding: 16px;
+}
+
+.story-duration-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1D2023;
+    margin-bottom: 12px;
+}
+
+.story-duration-options {
+    display: flex;
+    gap: 8px;
+}
+
+.story-duration-card {
+    flex: 1;
+    background: #F2F3F7;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.story-duration-card:active {
+    transform: scale(0.96);
+}
+
+.story-duration-card.selected {
+    background: #FFFFFF;
+    border-color: #0066FF;
+    box-shadow: 0 2px 8px rgba(0, 102, 255, 0.15);
+}
+
+.story-duration-card.popular {
+    position: relative;
+}
+
+.story-duration-popular-tag {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #0066FF 0%, #3D8BFF 100%);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.story-duration-days {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1D2023;
+    margin-bottom: 4px;
+}
+
+.story-duration-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1D2023;
+    margin-bottom: 2px;
+}
+
+.story-duration-card.selected .story-duration-price {
+    color: #0066FF;
+}
+
+.story-duration-save {
+    font-size: 11px;
+    font-weight: 500;
+    color: #136938;
+}
+
+/* Story Wallet Info */
+.story-wallet-info {
+    margin: 0 16px;
+    padding: 12px 16px;
+    background: #F2F3F7;
+    border-radius: 12px;
+}
+
+/* Story Select Hint */
+.story-select-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #626C77;
+}
+
+/* Story Apply Button */
+.story-apply-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #0066FF 0%, #3D8BFF 100%);
+}
+
+.story-apply-btn:active {
+    background: linear-gradient(135deg, #0052CC 0%, #2C73E8 100%);
+}
+
+.story-apply-btn:disabled {
+    background: #949494;
+    cursor: not-allowed;
+}
+
+/* Story Badge */
+.badge.story {
+    background: linear-gradient(135deg, #0066FF 0%, #3D8BFF 100%);
+    color: #FFFFFF;
+}
+
+.promo-type-badge.story {
+    background: linear-gradient(135deg, #0066FF 0%, #3D8BFF 100%);
+    color: white;
+}
+
+/* ========================================
+   Story Success Modal
+   ======================================== */
+
+.story-success-modal {
+    max-width: 340px;
+    border-radius: 20px;
+    padding: 32px 24px 24px;
+    text-align: center;
+    animation: successPopIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.story-success-animation {
+    position: relative;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.story-success-circle-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #0066FF 0%, #3D8BFF 50%, #00D4FF 100%);
+    animation: successRingSpin 3s linear infinite;
+}
+
+@keyframes successRingSpin {
+    0% { background: linear-gradient(0deg, #0066FF, #3D8BFF, #00D4FF); }
+    33% { background: linear-gradient(120deg, #0066FF, #3D8BFF, #00D4FF); }
+    66% { background: linear-gradient(240deg, #0066FF, #3D8BFF, #00D4FF); }
+    100% { background: linear-gradient(360deg, #0066FF, #3D8BFF, #00D4FF); }
+}
+
+.story-success-circle-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+}
+
+.story-success-sparkles {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.story-success-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1D2023;
+    margin: 0 0 8px;
+}
+
+.story-success-subtitle {
+    font-size: 14px;
+    color: #626C77;
+    margin: 0 0 20px;
+    line-height: 1.4;
+}
+
+.story-success-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #F8F9FA;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.story-success-preview img {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.story-success-preview-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.story-success-preview-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1D2023;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.story-success-preview-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: linear-gradient(135deg, #0066FF 0%, #3D8BFF 100%);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+/* Story listing card - selected state */
+.listing-card.story-selected {
+    background: #F0F4FF;
+    border-left: 3px solid #0066FF;
+}
+
+.listing-card.story-selected .listing-checkbox .checkbox {
+    background: #0066FF !important;
+    border-color: #0066FF !important;
+}

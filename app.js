@@ -42,7 +42,15 @@ const walletBalance = 25.00;
 const promoPrices = {
     vip: 2.50,
     top: 1.50,
-    update: 0.50
+    update: 0.50,
+    story: 1.99
+};
+
+// Story pricing tiers
+const storyPrices = {
+    1: 1.99,
+    3: 4.99,
+    7: 9.99
 };
 
 // Mock data for listings
@@ -750,7 +758,10 @@ let state = {
     },
     sort: 'date-desc',
     pendingPromotionType: null,
-    lastAppliedListings: []
+    lastAppliedListings: [],
+    // Story state
+    storySelectedListing: null,
+    storyDuration: 1
 };
 
 // Social proof messages for different listing types
@@ -1301,6 +1312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderListings('listings-package', mockListings.filter(l => l.status === 'active'));
     renderListings('listings-wallet', mockListings.filter(l => l.status === 'active'));
     renderListings('listings-success', mockListings);
+    renderStoryListings();
 
     setupSelectAllHandlers();
     updateSortDisplay();
@@ -1347,6 +1359,14 @@ function navigateTo(screenId, preserveSelection = false) {
     renderListings('listings-wallet', mockListings.filter(l => l.status === 'active'));
     renderListings('listings-success', mockListings);
 
+    // Render story listings when navigating to story screen
+    if (screenId === 'screen-story-apply') {
+        state.storySelectedListing = null;
+        state.storyDuration = 1;
+        renderStoryListings();
+        updateStoryUI();
+    }
+
     updateSelectionUI();
 }
 
@@ -1383,6 +1403,7 @@ function renderListings(containerId, listings) {
 
     container.innerHTML = filteredListings.map(listing => {
         const badgesHtml = [];
+        if (listing.hasStory) badgesHtml.push('<span class="badge story">STORY</span>');
         if (listing.hasVip) badgesHtml.push('<span class="badge vip">VIP</span>');
         if (listing.hasTop) badgesHtml.push('<span class="badge top">TOP</span>');
 
@@ -1446,7 +1467,8 @@ function applyFiltersToListings(listings) {
         if (state.filters.promotion) {
             if (state.filters.promotion === 'vip' && !listing.hasVip) return false;
             if (state.filters.promotion === 'top' && !listing.hasTop) return false;
-            if (state.filters.promotion === 'none' && (listing.hasVip || listing.hasTop)) return false;
+            if (state.filters.promotion === 'story' && !listing.hasStory) return false;
+            if (state.filters.promotion === 'none' && (listing.hasVip || listing.hasTop || listing.hasStory)) return false;
         }
 
         // Keyword filter
@@ -1696,6 +1718,7 @@ function selectPromotion(value) {
     let displayText = 'Promotion';
     if (value === 'vip') displayText = 'VIP';
     else if (value === 'top') displayText = 'TOP';
+    else if (value === 'story') displayText = 'Story';
     else if (value === 'none') displayText = 'No promotion';
 
     document.getElementById('promotion-display').textContent = displayText;
@@ -2263,6 +2286,175 @@ function showActionToast(message) {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
     }, 3000);
+}
+
+// ========================================
+// STORY ON MAIN PAGE - Promotion Flow
+// ========================================
+
+// Render story listings (single-select, radio-style)
+function renderStoryListings() {
+    const container = document.getElementById('listings-story');
+    if (!container) return;
+
+    const activeListings = mockListings
+        .filter(l => l.status === 'active' && !l.hasStory)
+        .sort((a, b) => b.views - a.views);
+
+    if (activeListings.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>No active listings</h3>
+                <p>You need at least one active listing to create a story</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = activeListings.map(listing => {
+        const badgesHtml = [];
+        if (listing.hasVip) badgesHtml.push('<span class="badge vip">VIP</span>');
+        if (listing.hasTop) badgesHtml.push('<span class="badge top">TOP</span>');
+        const isSelected = state.storySelectedListing === listing.id;
+
+        return `
+        <div class="listing-card ${isSelected ? 'story-selected' : ''}" data-id="${listing.id}" onclick="selectStoryListing(${listing.id})">
+            <div class="listing-checkbox">
+                <div class="radio ${isSelected ? 'selected' : ''}"></div>
+            </div>
+            <img src="${listing.image}" alt="${listing.title}" class="listing-image">
+            <div class="listing-info">
+                ${badgesHtml.length > 0 ? `
+                <div class="listing-price-row">
+                    <div class="listing-badges">${badgesHtml.join('')}</div>
+                    <div class="listing-price">${listing.priceDisplay}</div>
+                </div>
+                ` : `<div class="listing-price">${listing.priceDisplay}</div>`}
+                <div class="listing-title">${listing.title}</div>
+                <div class="listing-status">${listing.location} · ${listing.views} views · ${listing.favorites} favorites</div>
+            </div>
+        </div>
+    `;}).join('');
+}
+
+// Select a listing for story
+function selectStoryListing(listingId) {
+    state.storySelectedListing = listingId;
+    renderStoryListings();
+    updateStoryUI();
+}
+
+// Select story duration
+function selectStoryDuration(days) {
+    state.storyDuration = days;
+
+    // Update duration card selection
+    document.querySelectorAll('.story-duration-card').forEach(card => {
+        card.classList.toggle('selected', parseInt(card.dataset.duration) === days);
+    });
+
+    updateStoryUI();
+}
+
+// Update Story UI (preview, price, button)
+function updateStoryUI() {
+    const listing = state.storySelectedListing
+        ? mockListings.find(l => l.id === state.storySelectedListing)
+        : null;
+    const price = storyPrices[state.storyDuration];
+
+    // Update preview circle
+    const previewImg = document.getElementById('story-preview-img');
+    const previewName = document.getElementById('story-preview-name');
+    const previewSlot = document.getElementById('story-preview-slot');
+
+    if (previewImg && listing) {
+        previewImg.innerHTML = `<img src="${listing.image}" alt="${listing.title}">`;
+        previewName.textContent = listing.priceDisplay;
+        previewSlot.classList.add('active');
+    } else if (previewImg) {
+        previewImg.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="#949494" stroke-width="2" stroke-linecap="round"/></svg>';
+        previewName.textContent = 'Select ad';
+    }
+
+    // Update cost display
+    const costDisplay = document.getElementById('story-cost-display');
+    if (costDisplay) {
+        costDisplay.textContent = `€${price.toFixed(2)}`;
+    }
+
+    // Update button
+    const btn = document.getElementById('apply-story-btn');
+    if (btn) {
+        btn.disabled = !listing;
+        btn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                <path d="M8 12L12 8L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 16V9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Publish Story · €${price.toFixed(2)}
+        `;
+    }
+}
+
+// Apply story promotion
+function applyStoryPromotion() {
+    const listing = mockListings.find(l => l.id === state.storySelectedListing);
+    if (!listing) return;
+
+    const price = storyPrices[state.storyDuration];
+    const duration = state.storyDuration;
+
+    // Mark listing as having story
+    listing.hasStory = true;
+    listing.storyText = `Story for ${duration} day${duration > 1 ? 's' : ''}`;
+
+    // Show success modal
+    showStorySuccess(listing, duration, price);
+
+    // Re-render listings
+    renderListings('listings-main', mockListings);
+    renderRecommendations();
+}
+
+// Show story success modal
+function showStorySuccess(listing, duration, price) {
+    const modal = document.getElementById('story-success-modal');
+    const imgEl = document.getElementById('story-success-img');
+    const msgEl = document.getElementById('story-success-message');
+    const listingPreview = document.getElementById('story-success-listing');
+
+    if (imgEl) {
+        imgEl.src = listing.image;
+    }
+
+    if (msgEl) {
+        msgEl.textContent = `Your ad is now visible to everyone on the Main Page for ${duration} day${duration > 1 ? 's' : ''}`;
+    }
+
+    if (listingPreview) {
+        listingPreview.innerHTML = `
+            <img src="${listing.image}" alt="${listing.title}">
+            <div class="story-success-preview-info">
+                <div class="story-success-preview-title">${listing.title}</div>
+                <span class="story-success-preview-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg>
+                    STORY Active
+                </span>
+            </div>
+        `;
+    }
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+// Close story success modal
+function closeStorySuccessModal() {
+    document.getElementById('story-success-modal').style.display = 'none';
+    document.body.style.overflow = '';
+    navigateTo('screen-my-listings');
 }
 
 // Service Worker Registration
