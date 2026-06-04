@@ -223,6 +223,51 @@
 
 ---
 
+## Сценарий 9: Listing Score (AI Seller Hub) — freemium-гейт
+
+**Цель:** Продавец понимает, почему объявление не получает контактов, и конвертится в VIP/TOP, чтобы открыть рекомендации.
+
+> Реализует spec `2026-q3-listing-score` (Quality+Price → единый Listing Score за VIP/TOP-гейтом). Вариант дизайна — **Variant 1 «Traffic Control Center»** + полный флоу. Тексты на английском (консистентно с остальным прототипом).
+
+### Экраны:
+
+| Экран | ID | Описание |
+|-------|-----|----------|
+| Детали балла | `screen-listing-score` | Кольцо 0–100, тренд, главная проблема, quick wins (locked-тизер) |
+| Рекомендации | `screen-score-recommendations` | Табы All/Critical/Quick + список фиксов с CTA |
+| Сравнение цены | `screen-price-comparison` | Гистограмма рынка, «18% выше рынка», рекомендуемая цена |
+| Добавить фото | `screen-add-photo` | Пример быстрого действия (плитки +) |
+| Paywall | `screen-paywall` | TOP €17.99 / VIP €28.99 + чеклист → разблокирует рекомендации |
+
+### Поверхности на «My ads»:
+- **Агрегатная карточка** вверху скролла: кольцо `54/100`, «Price above market / Losing up to 30% of leads», «N ads can be improved», кнопка «View recommendations», замок «Unlock with VIP or TOP».
+- **Per-listing балл-пилюля** на каждой карточке объявления (heatmap-цвет: red <5 / amber 5–7.5 / green >7.5), напр. `4.2 Price`, `8.7 Excellent`.
+
+### Шаги (freemium-петля):
+1. **My ads** → тап карточки балла → `screen-listing-score` (locked: балл и главная проблема видны, фиксы под замком)
+2. **«Unlock with VIP / TOP»** → `screen-paywall`
+3. **Покупка** → балл разблокирован, возврат на детали (теперь без замков) + toast
+4. **«View all recommendations»** → `screen-score-recommendations`
+5. **«Change price»** → `screen-price-comparison` → **«Change price»** → балл объявления растёт (4.2 → 7.8), возврат на My ads + toast
+6. **«Add photos»** → `screen-add-photo` → балл растёт
+
+### Гейт (`scoreUnlocked`):
+- `false` по умолчанию → балл виден всем, детали фиксов под замком (FR-003)
+- Покупка из paywall → `true` → всё раскрыто (FR-004)
+- Любой залоченный CTA при `locked` → ведёт на paywall
+
+### Инструментация (console, spec §13):
+- `insight_impression` — карточка показана (`insight_type=listing_score, surface, arm`)
+- `insight_click` — тап CTA/фикс (`+ fix_key`)
+- `insight_action_completed` — фикс выполнен / куплен VIP/TOP (`+ fix_key, value?`)
+
+### Известные упрощения:
+- Балл/медиана не считаются с бэка — детерминированный мок per-listing + overrides для hero-карточек
+- «Improve description» — заглушка-toast (нет отдельного экрана)
+- `scoreUnlocked` глобальный (в spec гейт per-listing по VIP/TOP) — упрощено для демо-петли
+
+---
+
 ## Бизнес-правила
 
 ### VIP и TOP взаимоисключающие
@@ -316,5 +361,5 @@ screen-success
 
 ## Версия
 
-- Текущая версия: v30
-- Последнее обновление: добавлены статусы со счётчиками
+- Текущая версия: v31
+- Последнее обновление: добавлен Listing Score (AI Seller Hub) — агрегатная карточка, per-listing балл-пилюли, детали/рекомендации/сравнение цены/добавление фото, VIP/TOP-пейвол (Сценарий 9)

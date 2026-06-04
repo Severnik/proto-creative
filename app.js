@@ -45,6 +45,74 @@ const promoPrices = {
     update: 0.50
 };
 
+// ============================================================
+// Listing Score (AI Seller Hub) — spec 2026-q3-listing-score
+// ============================================================
+
+// Whether the seller has unlocked full recommendations (VIP/TOP gate).
+// Locked by default — buying from the paywall flips this to true.
+let scoreUnlocked = false;
+
+// Catalogue of possible fixes (ordered by impact). title = headline shown
+// to seller, label = short badge sub-label, uplift = expected_contact_uplift.
+const FIX_CATALOG = {
+    price: { key: 'price', title: 'Price above market', label: 'Price', uplift: '+30%', severity: 'critical' },
+    photos: { key: 'photos', title: 'Add more photos', label: 'Photos', uplift: '+12%', severity: 'quick' },
+    description: { key: 'description', title: 'Improve description', label: 'Description', uplift: '+8%', severity: 'quick' }
+};
+
+// Pinned scores for the hero listings so the My ads screen matches the design.
+const SCORE_OVERRIDES = {
+    1: { value: 4.2, fix: 'price' },   // Mercedes-Benz G-Class — price above market
+    2: { value: 8.7, fix: null },      // BMW X6 — excellent
+    3: { value: 6.1, fix: 'photos' },  // Land Rover Evoque — add photos
+    5: { value: 8.0, fix: null },      // Honda Civic — excellent
+    8: { value: 5.0, fix: 'description' }
+};
+
+// value < 5 → weak (red), 5–7.5 → average (amber), > 7.5 → strong (green)
+function scoreGrade(value) {
+    if (value < 5) return 'weak';
+    if (value <= 7.5) return 'average';
+    return 'strong';
+}
+
+// Deterministic per-listing score (stable across re-renders, no Math.random).
+function listingScore(listing) {
+    const override = SCORE_OVERRIDES[listing.id];
+    let value, fixKey;
+    if (override) {
+        value = override.value;
+        fixKey = override.fix;
+    } else {
+        // Pseudo-random but stable, seeded from the id.
+        const seed = (listing.id * 9301 + 49297) % 233280;
+        const rnd = seed / 233280; // 0..1
+        value = Math.round((3.2 + rnd * 4.8) * 10) / 10; // 3.2..8.0
+        if (value < 5) fixKey = 'price';
+        else if (value <= 7.5) fixKey = (listing.id % 2 === 0) ? 'photos' : 'description';
+        else fixKey = null;
+    }
+    const grade = scoreGrade(value);
+    const topFix = fixKey ? FIX_CATALOG[fixKey] : null;
+    const label = topFix ? topFix.label : 'Excellent';
+    return { value, grade, label, topFix };
+}
+
+// Aggregate account score (0–100) = avg per-listing value × 10, over active ads.
+function aggregateScore() {
+    const active = mockListings.filter(l => l.status === 'active');
+    if (active.length === 0) return { score: 0, needAttention: 0, strong: 0 };
+    const values = active.map(l => listingScore(l).value);
+    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+    return {
+        score: Math.round(avg * 10),
+        needAttention: values.filter(v => v < 7).length,
+        strong: values.filter(v => v > 7.5).length,
+        losing: values.filter(v => v < 5).length
+    };
+}
+
 // Mock data for listings
 const mockListings = [
     {
@@ -1315,6 +1383,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderRecommendations();
     console.log('renderRecommendations completed');
 
+    renderListingScoreCard();
     updatePackageHealthBar();
 });
 
@@ -1346,6 +1415,8 @@ function navigateTo(screenId, preserveSelection = false) {
     renderListings('listings-package', mockListings.filter(l => l.status === 'active'));
     renderListings('listings-wallet', mockListings.filter(l => l.status === 'active'));
     renderListings('listings-success', mockListings);
+
+    if (screenId === 'screen-my-listings') renderListingScoreCard();
 
     updateSelectionUI();
 }
@@ -1386,6 +1457,14 @@ function renderListings(containerId, listings) {
         if (listing.hasVip) badgesHtml.push('<span class="badge vip">VIP</span>');
         if (listing.hasTop) badgesHtml.push('<span class="badge top">TOP</span>');
 
+        // Listing Score pill (every listing gets a deterministic score)
+        const sc = listingScore(listing);
+        const scorePillHtml = `
+            <div class="listing-score-pill grade-${sc.grade}" onclick="event.stopPropagation(); openListingScore(${listing.id})">
+                <div class="lsp-value"><span class="lsp-dot"></span>${sc.value.toFixed(1)}</div>
+                <div class="lsp-label">${sc.label}</div>
+            </div>`;
+
         // Get social proof for this listing (only for listings without promotions)
         const socialProof = (!listing.hasVip && !listing.hasTop) ? getRandomSocialProof(listing) : null;
         const socialProofHtml = socialProof ? `
@@ -1412,6 +1491,7 @@ function renderListings(containerId, listings) {
                 <div class="listing-status">${listing.statusText || `${listing.status.charAt(0).toUpperCase() + listing.status.slice(1)}`}${listing.hasVip && listing.vipText ? `<br>${listing.vipText}` : ''}</div>
                 ${socialProofHtml}
             </div>
+            ${scorePillHtml}
         </div>
     `;}).join('');
 
@@ -2280,3 +2360,312 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+
+
+// ============================================================
+// Listing Score — UI logic, navigation & freemium gate
+// ============================================================
+
+// Lightweight instrumentation mirror (spec §13: insight_* events)
+function trackInsight(event, props) {
+    console.log('[insight]', event, props || {});
+}
+
+// Account-level fixes shown on the detail + recommendations screens.
+const ACCOUNT_FIXES = [
+    {
+        key: 'price', severity: 'critical', title: 'Lower the price by 18%',
+        desc: 'Similar ads are 18% above market. This can cut your leads by up to 30%.',
+        cur: '€285.000', reco: '€235.000 – €245.000', uplift: '+30%',
+        action: 'Change price', go: 'price'
+    },
+    {
+        key: 'photos', severity: 'quick', title: 'Add more photos',
+        desc: 'Ads with 5+ photos get up to 2× more leads.',
+        uplift: '+12%', action: 'Add photos', go: 'photo'
+    },
+    {
+        key: 'description', severity: 'quick', title: 'Improve the description',
+        desc: 'A complete description increases the chance of contact.',
+        uplift: '+8%', action: 'Improve', go: 'desc'
+    }
+];
+
+let currentRecFilter = 'all';
+let selectedPlan = 'vip';
+
+// ----- Score ring (SVG donut) -----
+function ringColor(value, max) {
+    const pct = value / max;
+    if (pct < 0.5) return '#B42525';
+    if (pct < 0.72) return '#FFAB00';
+    return '#136938';
+}
+
+function scoreRingSvg(value, max, opts) {
+    opts = opts || {};
+    const size = opts.size || 84;
+    const stroke = opts.stroke || 7;
+    const r = (size - stroke) / 2;
+    const c = 2 * Math.PI * r;
+    const pct = Math.max(0, Math.min(1, value / max));
+    const dash = c * pct;
+    const color = opts.color || ringColor(value, max);
+    const big = Math.round(size * 0.30);
+    const small = Math.round(size * 0.15);
+    return `
+    <svg class="score-ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+        <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="#EDEFF3" stroke-width="${stroke}"/>
+        <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}"
+                stroke-linecap="round" stroke-dasharray="${dash} ${c}"
+                transform="rotate(-90 ${size / 2} ${size / 2})"/>
+        <text x="50%" y="${size * 0.46}" text-anchor="middle" dominant-baseline="central"
+              style="font-size:${big}px;font-weight:700;fill:${color}">${Math.round(value)}</text>
+        <text x="50%" y="${size * 0.68}" text-anchor="middle"
+              style="font-size:${small}px;font-weight:500;fill:#949494">/${max}</text>
+    </svg>`;
+}
+
+// ----- Aggregate card on My ads -----
+function renderListingScoreCard() {
+    const wrap = document.getElementById('listing-score-card-wrap');
+    if (!wrap) return;
+    const agg = aggregateScore();
+    const locked = !scoreUnlocked;
+
+    wrap.innerHTML = `
+    <div class="listing-score-card">
+        <div class="lsc-top" onclick="openListingScore()">
+            ${scoreRingSvg(agg.score, 100, { size: 76 })}
+            <div class="lsc-body">
+                <div class="lsc-problem-title">Price above market</div>
+                <div class="lsc-problem-sub">Losing up to 30% of leads</div>
+                <div class="lsc-count">${agg.needAttention} ads can be improved</div>
+            </div>
+            <svg class="lsc-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
+            </svg>
+        </div>
+        <button class="lsc-cta" onclick="openRecommendations()">View recommendations</button>
+        ${locked
+            ? `<div class="lsc-lock">
+                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#949494" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#949494" stroke-width="2"/></svg>
+                   Unlock with VIP or TOP
+               </div>`
+            : `<div class="lsc-unlocked">✓ Recommendations unlocked</div>`
+        }
+    </div>`;
+
+    trackInsight('insight_impression', { insight_type: 'listing_score', surface: 'my_ads', arm: 'treatment' });
+}
+
+// ----- Detail screen -----
+function openListingScore(listingId) {
+    trackInsight('insight_click', { insight_type: 'listing_score', surface: 'my_ads', target: 'detail' });
+    navigateTo('screen-listing-score');
+    renderListingScoreDetail();
+}
+
+function renderListingScoreDetail() {
+    const body = document.getElementById('listing-score-detail-body');
+    if (!body) return;
+    const agg = aggregateScore();
+    const locked = !scoreUnlocked;
+
+    const quickWins = locked
+        ? `
+        <div class="ls-locked-list">
+            <div class="ls-locked-row">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#949494" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#949494" stroke-width="2"/></svg>
+                <div><div class="ls-locked-title">Optimize price</div><div class="ls-locked-sub">Set the price for maximum leads</div></div>
+            </div>
+            <div class="ls-locked-row">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#949494" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#949494" stroke-width="2"/></svg>
+                <div><div class="ls-locked-title">Add photos &amp; improve description</div><div class="ls-locked-sub">+20% contact rate on average</div></div>
+            </div>
+            <button class="ls-primary-btn" onclick="openPaywall()">Unlock with VIP / TOP</button>
+        </div>`
+        : `
+        <div class="ls-win-list">
+            ${ACCOUNT_FIXES.slice(1).map(f => `
+                <div class="ls-win-row" onclick="goFix('${f.go}')">
+                    <div class="ls-win-info"><div class="ls-win-title">${f.title}</div><div class="ls-win-uplift">${f.uplift} leads</div></div>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/></svg>
+                </div>`).join('')}
+            <button class="ls-primary-btn" onclick="openRecommendations()">View all recommendations</button>
+        </div>`;
+
+    body.innerHTML = `
+        <div class="ls-hero">
+            ${scoreRingSvg(agg.score, 100, { size: 96 })}
+            <div class="ls-hero-meta">
+                <div class="ls-hero-title">Average across your ads</div>
+                <div class="ls-hero-trend down">▼ −12 in the last 7 days</div>
+            </div>
+        </div>
+        <div class="ls-stat-row">
+            <div class="ls-stat">
+                <div class="ls-stat-value green">+28%</div>
+                <div class="ls-stat-label">more leads potential</div>
+            </div>
+            <div class="ls-stat">
+                <div class="ls-stat-value">${agg.needAttention}</div>
+                <div class="ls-stat-label">ads need attention</div>
+            </div>
+        </div>
+        <div class="ls-section-label">Main problem</div>
+        <div class="ls-problem-card" onclick="${locked ? 'openPaywall()' : 'openPriceComparison()'}">
+            <div class="ls-problem-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#B42525" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="ls-problem-body">
+                <div class="ls-problem-title">Price above market</div>
+                <div class="ls-problem-text">Your ad is priced 15–20% above market. This can cut leads by up to 30%.</div>
+            </div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/></svg>
+        </div>
+        <div class="ls-section-label">Quick wins ${locked ? '<span class="ls-lock-hint">unlock all with VIP/TOP</span>' : ''}</div>
+        ${quickWins}`;
+}
+
+// ----- Recommendations screen -----
+function openRecommendations() {
+    trackInsight('insight_click', { insight_type: 'listing_score', target: 'recommendations' });
+    if (!scoreUnlocked) { openPaywall(); return; }
+    navigateTo('screen-score-recommendations');
+    renderRecommendationsList();
+}
+
+function filterRecommendations(filter) {
+    currentRecFilter = filter;
+    document.querySelectorAll('#rec-tabs .ls-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.filter === filter);
+    });
+    renderRecommendationsList();
+}
+
+function renderRecommendationsList() {
+    const body = document.getElementById('recommendations-body');
+    if (!body) return;
+    const fixes = ACCOUNT_FIXES.filter(f => currentRecFilter === 'all' || f.severity === currentRecFilter);
+    body.innerHTML = fixes.map(f => `
+        <div class="ls-reco-card">
+            <div class="ls-reco-tag ${f.severity}">${f.severity === 'critical' ? 'CRITICAL' : 'QUICK WIN'}</div>
+            <div class="ls-reco-title">${f.title}</div>
+            <div class="ls-reco-desc">${f.desc}</div>
+            ${f.cur ? `
+            <div class="ls-reco-compare">
+                <div><div class="ls-reco-compare-label">Current price</div><div class="ls-reco-compare-cur">${f.cur}</div></div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="#949494" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div><div class="ls-reco-compare-label">Recommended</div><div class="ls-reco-compare-reco">${f.reco}</div></div>
+            </div>` : ''}
+            <div class="ls-reco-footer">
+                <span class="ls-reco-uplift">▲ ${f.uplift} leads</span>
+                <button class="ls-reco-action" onclick="goFix('${f.go}')">${f.action}</button>
+            </div>
+        </div>`).join('');
+}
+
+function goFix(go) {
+    if (go === 'price') openPriceComparison();
+    else if (go === 'photo') openAddPhoto();
+    else showScoreToast('Description editor opens here');
+}
+
+// ----- Price comparison -----
+function openPriceComparison() {
+    if (!scoreUnlocked) { openPaywall(); return; }
+    trackInsight('insight_click', { fix_key: 'price', target: 'price_comparison' });
+    navigateTo('screen-price-comparison');
+}
+
+function renderPriceHistogram() {
+    const el = document.getElementById('price-histogram');
+    if (!el) return;
+    // Market distribution; the "You" bar is the tall outlier on the right.
+    const bars = [22, 40, 64, 92, 78, 55, 34, 20, 12, 70];
+    const youIndex = 9;
+    el.innerHTML = bars.map((h, i) => `
+        <div class="ls-bar-wrap">
+            <div class="ls-bar ${i === youIndex ? 'you' : ''}" style="height:${h}%"></div>
+            ${i === youIndex ? '<div class="ls-bar-you-label">You</div>' : ''}
+        </div>`).join('');
+}
+
+function applyPriceChange() {
+    SCORE_OVERRIDES[1] = { value: 7.8, fix: null };
+    trackInsight('insight_action_completed', { fix_key: 'price', advert_id: 1, value: 45000 });
+    navigateTo('screen-my-listings');
+    renderListingScoreCard();
+    showScoreToast('✓ Price updated — your Listing Score improved');
+}
+
+// ----- Add photos -----
+function openAddPhoto() {
+    if (!scoreUnlocked) { openPaywall(); return; }
+    trackInsight('insight_click', { fix_key: 'photos', target: 'add_photo' });
+    navigateTo('screen-add-photo');
+}
+
+function fillPhotoTile(el) {
+    el.classList.add('filled');
+    el.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#136938" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+
+function applyAddPhoto() {
+    SCORE_OVERRIDES[3] = { value: 8.3, fix: null };
+    trackInsight('insight_action_completed', { fix_key: 'photos', advert_id: 3 });
+    navigateTo('screen-my-listings');
+    renderListingScoreCard();
+    showScoreToast('✓ Photos added — your Listing Score improved');
+}
+
+// ----- Paywall / freemium gate -----
+function openPaywall() {
+    trackInsight('insight_click', { insight_type: 'listing_score', target: 'paywall' });
+    navigateTo('screen-paywall');
+}
+
+function closePaywall() {
+    navigateTo(scoreUnlocked ? 'screen-listing-score' : 'screen-my-listings');
+    if (scoreUnlocked) renderListingScoreDetail();
+}
+
+function selectPlan(plan) {
+    selectedPlan = plan;
+    document.querySelectorAll('#screen-paywall .paywall-plan').forEach(p => {
+        p.classList.toggle('selected', p.dataset.plan === plan);
+    });
+    const btn = document.getElementById('paywall-buy-btn');
+    if (btn) {
+        const price = plan === 'vip' ? '€28.99' : '€17.99';
+        btn.textContent = `Unlock with ${plan.toUpperCase()} · ${price}`;
+    }
+}
+
+function buyAndUnlock() {
+    scoreUnlocked = true;
+    trackInsight('insight_action_completed', { insight_type: 'listing_score', fix_key: selectedPlan, value: selectedPlan === 'vip' ? 28.99 : 17.99 });
+    navigateTo('screen-listing-score');
+    renderListingScoreDetail();
+    renderListingScoreCard();
+    showScoreToast('🎉 Unlocked — full recommendations are now available');
+}
+
+// ----- Toast (reuses .bundle-toast styling) -----
+function showScoreToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'bundle-toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 50);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Render the static histogram once at load.
+document.addEventListener('DOMContentLoaded', () => {
+    renderPriceHistogram();
+});
