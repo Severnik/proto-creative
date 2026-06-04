@@ -95,8 +95,8 @@ function listingScore(listing) {
     }
     const grade = scoreGrade(value);
     const topFix = fixKey ? FIX_CATALOG[fixKey] : null;
-    const DESC = { price: 'Price above market', photos: 'Add photos', description: 'Improve description' };
-    const label = fixKey ? DESC[fixKey] : 'Excellent ad';
+    const DESC = { price: 'Цена выше рынка', photos: 'Добавьте фото', description: 'Улучшите описание' };
+    const label = fixKey ? DESC[fixKey] : 'Отличное';
     return { value, grade, label, topFix };
 }
 
@@ -115,10 +115,20 @@ function aggregateScore() {
     const avg = values.reduce((a, b) => a + b, 0) / values.length;
     return {
         score: Math.round(avg * 10),
-        needAttention: values.filter(v => v < 7).length,
+        weak: values.filter(v => v < 5).length,
+        average: values.filter(v => v >= 5 && v <= 7.5).length,
         strong: values.filter(v => v > 7.5).length,
+        needAttention: values.filter(v => v < 7).length,
         losing: values.filter(v => v < 5).length
     };
+}
+
+// Russian plural for «объявление» (1 объявление, 2–4 объявления, 5+ объявлений).
+function pluralAds(n) {
+    const m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return 'объявление';
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'объявления';
+    return 'объявлений';
 }
 
 // Mock data for listings
@@ -2386,20 +2396,20 @@ function trackInsight(event, props) {
 // Account-level fixes shown on the detail + recommendations screens.
 const ACCOUNT_FIXES = [
     {
-        key: 'price', severity: 'critical', title: 'Lower the price by 18%',
-        desc: 'Similar ads are 18% above market. This can cut your leads by up to 30%.',
+        key: 'price', severity: 'critical', title: 'Снизьте цену на 18%',
+        desc: 'Похожие объявления на 18% дешевле. Это может снижать лиды до 30%.',
         cur: '€285.000', reco: '€235.000 – €245.000', uplift: '+30%',
-        action: 'Change price', go: 'price'
+        action: 'Изменить цену', go: 'price'
     },
     {
-        key: 'photos', severity: 'quick', title: 'Add more photos',
-        desc: 'Ads with 5+ photos get up to 2× more leads.',
-        uplift: '+12%', action: 'Add photos', go: 'photo'
+        key: 'photos', severity: 'quick', title: 'Добавьте больше фото',
+        desc: 'Объявления с 5+ фото получают до 2× больше лидов.',
+        uplift: '+12%', action: 'Добавить фото', go: 'photo'
     },
     {
-        key: 'description', severity: 'quick', title: 'Improve the description',
-        desc: 'A complete description increases the chance of contact.',
-        uplift: '+8%', action: 'Improve', go: 'desc'
+        key: 'description', severity: 'quick', title: 'Улучшите описание',
+        desc: 'Полное описание повышает шанс контакта.',
+        uplift: '+8%', action: 'Улучшить', go: 'desc'
     }
 ];
 
@@ -2421,13 +2431,13 @@ function isScoreUnlocked(listingId) {
 }
 
 function gradeText(grade) {
-    return grade === 'strong' ? 'Excellent' : grade === 'average' ? 'Can be improved' : 'Needs attention';
+    return grade === 'strong' ? 'Отличное' : grade === 'average' ? 'Можно улучшить' : 'Требует внимания';
 }
 
 const PROBLEM = {
-    price: { title: 'Price above market', text: 'Priced above similar ads. Lowering it can bring up to 30% more leads.', go: 'price' },
-    photos: { title: 'Add more photos', text: 'Ads with 5+ photos get up to 2× more leads.', go: 'photo' },
-    description: { title: 'Improve the description', text: 'A complete description increases the chance of contact.', go: 'desc' }
+    price: { title: 'Цена выше рынка', text: 'Цена выше похожих объявлений. Снижение может дать до 30% больше лидов.', go: 'price' },
+    photos: { title: 'Добавьте фото', text: 'Объявления с 5+ фото получают до 2× больше лидов.', go: 'photo' },
+    description: { title: 'Улучшите описание', text: 'Полное описание повышает шанс контакта.', go: 'desc' }
 };
 
 // Fixes relevant to the current context: a single ad's top fix, or the whole account.
@@ -2442,11 +2452,11 @@ function getContextFixes() {
 }
 
 // ----- Score ring (SVG donut) -----
-function ringColor(value, max) {
+function ringColor(value, max, dark) {
     const pct = value / max;
-    if (pct < 0.5) return '#B42525';
-    if (pct < 0.72) return '#FFAB00';
-    return '#136938';
+    if (pct < 0.5) return dark ? '#F87171' : '#B42525';
+    if (pct < 0.72) return dark ? '#FBBF24' : '#FFAB00';
+    return dark ? '#4ADE80' : '#136938';
 }
 
 function scoreRingSvg(value, max, opts) {
@@ -2457,19 +2467,23 @@ function scoreRingSvg(value, max, opts) {
     const c = 2 * Math.PI * r;
     const pct = Math.max(0, Math.min(1, value / max));
     const dash = c * pct;
-    const color = opts.color || ringColor(value, max);
+    const dark = !!opts.dark;
+    const arc = opts.color || ringColor(value, max, dark);
+    const track = dark ? 'rgba(255,255,255,0.14)' : '#EDEFF3';
+    const numColor = dark ? '#FFFFFF' : arc;
+    const maxColor = dark ? '#A1A1AA' : '#949494';
     const big = Math.round(size * 0.30);
     const small = Math.round(size * 0.15);
     return `
     <svg class="score-ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-        <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="#EDEFF3" stroke-width="${stroke}"/>
-        <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}"
+        <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${track}" stroke-width="${stroke}"/>
+        <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${arc}" stroke-width="${stroke}"
                 stroke-linecap="round" stroke-dasharray="${dash} ${c}"
                 transform="rotate(-90 ${size / 2} ${size / 2})"/>
         <text x="50%" y="${size * 0.46}" text-anchor="middle" dominant-baseline="central"
-              style="font-size:${big}px;font-weight:700;fill:${color}">${Math.round(value)}</text>
+              style="font-size:${big}px;font-weight:700;fill:${numColor}">${Math.round(value)}</text>
         <text x="50%" y="${size * 0.68}" text-anchor="middle"
-              style="font-size:${small}px;font-weight:500;fill:#949494">/${max}</text>
+              style="font-size:${small}px;font-weight:500;fill:${maxColor}">/${max}</text>
     </svg>`;
 }
 
@@ -2482,25 +2496,31 @@ function renderListingScoreCard() {
 
     wrap.innerHTML = `
     <div class="listing-score-card">
-        <div class="lsc-top" onclick="openListingScore()">
-            ${scoreRingSvg(agg.score, 100, { size: 76 })}
-            <div class="lsc-body">
-                <div class="lsc-problem-title">Price above market</div>
-                <div class="lsc-problem-sub">Losing up to 30% of leads</div>
-                <div class="lsc-count">${agg.needAttention} ads can be improved</div>
-            </div>
-            <svg class="lsc-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
-            </svg>
+        <div class="lsc-head">
+            <span class="lsc-brand">Listing Score</span>
+            <span class="lsc-beta">BETA</span>
         </div>
-        <button class="lsc-cta" onclick="openRecommendationsFromCard()">View recommendations</button>
+        <div class="lsc-top" onclick="openListingScore()">
+            ${scoreRingSvg(agg.score, 100, { size: 84, dark: true })}
+            <div class="lsc-body">
+                <div class="lsc-headline">Вы теряете лиды из-за цены</div>
+                <div class="lsc-potential">Потенциал: <span class="lsc-potential-val">+28% лидов</span></div>
+                <div class="lsc-count">${agg.average} ${pluralAds(agg.average)} можно улучшить</div>
+            </div>
+        </div>
+        <button class="lsc-cta" onclick="openRecommendationsFromCard()">Показать рекомендации</button>
         ${locked
             ? `<div class="lsc-lock">
-                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#949494" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#949494" stroke-width="2"/></svg>
-                   Unlock all ads with VIP or TOP
+                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#A1A1AA" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#A1A1AA" stroke-width="2"/></svg>
+                   Откройте с VIP или TOP
                </div>`
-            : `<div class="lsc-unlocked">✓ Recommendations unlocked</div>`
+            : `<div class="lsc-unlocked">✓ Рекомендации открыты</div>`
         }
+    </div>
+    <div class="lsc-stat-row">
+        <div class="lsc-stat"><div class="lsc-stat-num red">${agg.weak}</div><div class="lsc-stat-label">${agg.weak === 1 ? 'теряет лиды' : 'теряют лиды'}</div></div>
+        <div class="lsc-stat"><div class="lsc-stat-num amber">${agg.average}</div><div class="lsc-stat-label">можно улучшить</div></div>
+        <div class="lsc-stat"><div class="lsc-stat-num green">${agg.strong}</div><div class="lsc-stat-label">отличных</div></div>
     </div>`;
 
     trackInsight('insight_impression', { insight_type: 'listing_score', surface: 'my_ads', arm: 'treatment' });
@@ -2528,28 +2548,28 @@ function renderListingScoreDetail() {
         heroSub = `<span class="ls-grade ${sc.grade}">${gradeText(sc.grade)}</span> · ${listing.priceDisplay}`;
         problemKey = sc.topFix ? sc.topFix.key : null;
         if (problemKey) {
-            statA = { v: sc.topFix.uplift, l: 'more leads potential', green: true };
-            statB = { v: '1', l: 'fix to apply' };
+            statA = { v: sc.topFix.uplift, l: 'больше лидов', green: true };
+            statB = { v: '1', l: 'что улучшить' };
         } else {
-            statA = { v: 'Top 10%', l: 'in your category', green: true };
-            statB = { v: '0', l: 'issues found' };
+            statA = { v: 'Топ-10%', l: 'в вашей категории', green: true };
+            statB = { v: '0', l: 'проблем' };
         }
         // Reassure VIP/TOP owners why their recommendations are already open.
         if (!locked && (listing.hasVip || listing.hasTop)) {
-            vasNote = `<div class="ls-vas-note">✓ ${listing.hasVip ? 'VIP' : 'TOP'} active — recommendations are open for this ad</div>`;
+            vasNote = `<div class="ls-vas-note">✓ ${listing.hasVip ? 'VIP' : 'TOP'} активен — рекомендации открыты для этого объявления</div>`;
         }
     } else {
         const agg = aggregateScore();
         ringVal = agg.score;
-        heroTitle = 'Average across your ads';
-        heroSub = '<span class="ls-trend-down">▼ −12 in the last 7 days</span>';
+        heroTitle = 'В среднем по вашим объявлениям';
+        heroSub = '<span class="ls-trend-down">▼ −12 за последние 7 дней</span>';
         problemKey = 'price';
-        statA = { v: '+28%', l: 'more leads potential', green: true };
-        statB = { v: String(agg.needAttention), l: 'ads need attention' };
+        statA = { v: '+28%', l: 'больше лидов', green: true };
+        statB = { v: String(agg.needAttention), l: 'требуют внимания' };
     }
 
     const problemBlock = problemKey
-        ? `<div class="ls-section-label">Main problem</div>
+        ? `<div class="ls-section-label">Главная проблема</div>
            <div class="ls-problem-card" onclick="${locked ? 'openPaywall()' : `goFix('${PROBLEM[problemKey].go}')`}">
                <div class="ls-problem-icon">
                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#B42525" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2562,23 +2582,23 @@ function renderListingScoreDetail() {
            </div>`
         : `<div class="ls-positive-card">
                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="#136938" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-               <div><div class="ls-problem-title">This ad is in great shape</div><div class="ls-problem-text">No action needed — it's performing well.</div></div>
+               <div><div class="ls-problem-title">Объявление в отличной форме</div><div class="ls-problem-text">Действий не требуется — всё хорошо.</div></div>
            </div>`;
 
     let actions = '';
     if (problemKey) {
         actions = locked
-            ? `<div class="ls-section-label">Quick wins <span class="ls-lock-hint">unlock with VIP/TOP</span></div>
+            ? `<div class="ls-section-label">Быстрые победы <span class="ls-lock-hint">откройте с VIP/TOP</span></div>
                <div class="ls-locked-list">
                    <div class="ls-locked-row">
                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#949494" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#949494" stroke-width="2"/></svg>
-                       <div><div class="ls-locked-title">${PROBLEM[problemKey].title}</div><div class="ls-locked-sub">See the exact fix and its impact</div></div>
+                       <div><div class="ls-locked-title">${PROBLEM[problemKey].title}</div><div class="ls-locked-sub">Точный совет и его эффект</div></div>
                    </div>
-                   <button class="ls-primary-btn" onclick="openPaywall()">Unlock with VIP / TOP</button>
+                   <button class="ls-primary-btn" onclick="openPaywall()">Открыть с VIP / TOP</button>
                </div>`
-            : `<div class="ls-section-label">Quick wins</div>
+            : `<div class="ls-section-label">Быстрые победы</div>
                <div class="ls-win-list">
-                   <button class="ls-primary-btn" onclick="openRecommendations()">View recommendations</button>
+                   <button class="ls-primary-btn" onclick="openRecommendations()">Посмотреть рекомендации</button>
                </div>`;
     }
 
@@ -2644,24 +2664,24 @@ function renderRecommendationsList() {
     if (fixes.length === 0) {
         body.innerHTML = `
             <div class="ls-empty">
-                <div class="ls-empty-title">No recommendations</div>
-                <div class="ls-empty-text">This ad is performing well — nothing to improve right now.</div>
+                <div class="ls-empty-title">Нет рекомендаций</div>
+                <div class="ls-empty-text">Объявление работает хорошо — улучшать пока нечего.</div>
             </div>`;
         return;
     }
     body.innerHTML = fixes.map(f => `
         <div class="ls-reco-card">
-            <div class="ls-reco-tag ${f.severity}">${f.severity === 'critical' ? 'CRITICAL' : 'QUICK WIN'}</div>
+            <div class="ls-reco-tag ${f.severity}">${f.severity === 'critical' ? 'КРИТИЧНО' : 'БЫСТРАЯ ПОБЕДА'}</div>
             <div class="ls-reco-title">${f.title}</div>
             <div class="ls-reco-desc">${f.desc}</div>
             ${f.cur ? `
             <div class="ls-reco-compare">
-                <div><div class="ls-reco-compare-label">Current price</div><div class="ls-reco-compare-cur">${f.cur}</div></div>
+                <div><div class="ls-reco-compare-label">Текущая цена</div><div class="ls-reco-compare-cur">${f.cur}</div></div>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="#949494" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <div><div class="ls-reco-compare-label">Recommended</div><div class="ls-reco-compare-reco">${f.reco}</div></div>
+                <div><div class="ls-reco-compare-label">Рекомендуем</div><div class="ls-reco-compare-reco">${f.reco}</div></div>
             </div>` : ''}
             <div class="ls-reco-footer">
-                <span class="ls-reco-uplift">▲ ${f.uplift} leads</span>
+                <span class="ls-reco-uplift">▲ ${f.uplift} лидов</span>
                 <button class="ls-reco-action" onclick="goFix('${f.go}')">${f.action}</button>
             </div>
         </div>`).join('');
@@ -2670,7 +2690,7 @@ function renderRecommendationsList() {
 function goFix(go) {
     if (go === 'price') openPriceComparison();
     else if (go === 'photo') openAddPhoto();
-    else showScoreToast('Description editor opens here');
+    else showScoreToast('Здесь откроется редактор описания');
 }
 
 // ----- Price comparison -----
@@ -2689,7 +2709,7 @@ function renderPriceHistogram() {
     el.innerHTML = bars.map((h, i) => `
         <div class="ls-bar-wrap">
             <div class="ls-bar ${i === youIndex ? 'you' : ''}" style="height:${h}%"></div>
-            ${i === youIndex ? '<div class="ls-bar-you-label">You</div>' : ''}
+            ${i === youIndex ? '<div class="ls-bar-you-label">Вы</div>' : ''}
         </div>`).join('');
 }
 
@@ -2698,7 +2718,7 @@ function applyPriceChange() {
     trackInsight('insight_action_completed', { fix_key: 'price', advert_id: 1, value: 45000 });
     navigateTo('screen-my-listings');
     renderListingScoreCard();
-    showScoreToast('✓ Price updated — your Listing Score improved');
+    showScoreToast('✓ Цена обновлена — Listing Score вырос');
 }
 
 // ----- Add photos -----
@@ -2718,7 +2738,7 @@ function applyAddPhoto() {
     trackInsight('insight_action_completed', { fix_key: 'photos', advert_id: 3 });
     navigateTo('screen-my-listings');
     renderListingScoreCard();
-    showScoreToast('✓ Photos added — your Listing Score improved');
+    showScoreToast('✓ Фото добавлены — Listing Score вырос');
 }
 
 // ----- Paywall / freemium gate -----
@@ -2740,7 +2760,7 @@ function selectPlan(plan) {
     const btn = document.getElementById('paywall-buy-btn');
     if (btn) {
         const price = plan === 'vip' ? '€28.99' : '€17.99';
-        btn.textContent = `Unlock with ${plan.toUpperCase()} · ${price}`;
+        btn.textContent = `Открыть с ${plan.toUpperCase()} · ${price}`;
     }
 }
 
@@ -2750,7 +2770,7 @@ function buyAndUnlock() {
     navigateTo('screen-listing-score');
     renderListingScoreDetail();
     renderListingScoreCard();
-    showScoreToast('🎉 Unlocked — full recommendations are now available');
+    showScoreToast('🎉 Открыто — полные рекомендации доступны');
 }
 
 // ----- Toast (reuses .bundle-toast styling) -----

@@ -10,7 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=42">
+    <link rel="stylesheet" href="styles.css?v=44">
 </head>
 <body>
     <div id="app">
@@ -923,14 +923,14 @@
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#1D2023" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
                 <div class="title-group-left">
-                    <h1 class="title-promotion">Recommendations</h1>
-                    <span class="subtitle-promotion">3 ways to get more leads</span>
+                    <h1 class="title-promotion">Рекомендации</h1>
+                    <span class="subtitle-promotion">3 способа получить больше лидов</span>
                 </div>
             </div>
             <div class="ls-tabs" id="rec-tabs">
-                <button class="ls-tab active" data-filter="all" onclick="filterRecommendations('all')">All <span class="ls-tab-badge">3</span></button>
-                <button class="ls-tab" data-filter="critical" onclick="filterRecommendations('critical')">Critical <span class="ls-tab-badge red">1</span></button>
-                <button class="ls-tab" data-filter="quick" onclick="filterRecommendations('quick')">Quick <span class="ls-tab-badge">2</span></button>
+                <button class="ls-tab active" data-filter="all" onclick="filterRecommendations('all')">Все <span class="ls-tab-badge">3</span></button>
+                <button class="ls-tab" data-filter="critical" onclick="filterRecommendations('critical')">Критичные <span class="ls-tab-badge red">1</span></button>
+                <button class="ls-tab" data-filter="quick" onclick="filterRecommendations('quick')">Быстрые <span class="ls-tab-badge">2</span></button>
             </div>
             <div class="ls-content" id="recommendations-body">
                 <!-- rendered by renderRecommendationsList() -->
@@ -952,7 +952,7 @@
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#1D2023" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
                 <div class="title-group-left">
-                    <h1 class="title-promotion">Price comparison</h1>
+                    <h1 class="title-promotion">Сравнение цены</h1>
                 </div>
             </div>
             <div class="ls-content">
@@ -964,17 +964,17 @@
                     </div>
                     <div class="listing-score-pill grade-weak">
                         <div class="lsp-value"><span class="lsp-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M12 7v6" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="12" cy="17.5" r="1.6" fill="#fff"/></svg></span><span class="lsp-num">4.2</span></div>
-                        <div class="lsp-label">Price above market</div>
+                        <div class="lsp-label">Цена выше рынка</div>
                     </div>
                 </div>
 
                 <div class="ls-alert">
-                    <div class="ls-alert-title">18% above market</div>
-                    <div class="ls-alert-text">Lowering the price can give you up to <b>30% more leads</b>.</div>
+                    <div class="ls-alert-title">18% выше рынка</div>
+                    <div class="ls-alert-text">Снижение цены может дать до <b>30% больше лидов</b>.</div>
                 </div>
 
                 <div class="ls-card">
-                    <div class="ls-card-label">Market — your category &amp; location</div>
+                    <div class="ls-card-label">Рынок — ваша категория и локация</div>
                     <div class="ls-histogram" id="price-histogram"></div>
                     <div class="ls-histogram-axis">
                         <span>€150k</span><span>€200k</span><span>€250k</span><span>€300k</span><span>€350k</span>
@@ -983,17 +983,17 @@
 
                 <div class="ls-reco-price">
                     <div>
-                        <div class="ls-reco-price-label">Recommended price</div>
+                        <div class="ls-reco-price-label">Рекомендуемая цена</div>
                         <div class="ls-reco-price-value">€235.000 – €245.000</div>
                     </div>
                     <div class="ls-uplift-chip">
-                        <div class="ls-uplift-chip-label">Potential</div>
-                        <div class="ls-uplift-chip-value">+28% leads</div>
+                        <div class="ls-uplift-chip-label">Потенциал</div>
+                        <div class="ls-uplift-chip-value">+28% лидов</div>
                     </div>
                 </div>
             </div>
             <div class="ls-bottom-bar">
-                <button class="ls-primary-btn" onclick="applyPriceChange()">Change price</button>
+                <button class="ls-primary-btn" onclick="applyPriceChange()">Изменить цену</button>
             </div>
         </div>
 
@@ -1012,30 +1012,30 @@
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#1D2023" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
                 <div class="title-group-left">
-                    <h1 class="title-promotion">Add photos</h1>
+                    <h1 class="title-promotion">Добавьте фото</h1>
                 </div>
             </div>
             <div class="ls-content">
                 <div class="ls-info-banner">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 16v-4M12 8h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#0066FF" stroke-width="2" stroke-linecap="round"/></svg>
-                    <span>Ads with 5+ photos get up to <b>2× more leads</b>.</span>
+                    <span>Объявления с 5+ фото получают до <b>2× больше лидов</b>.</span>
                 </div>
 
-                <div class="ls-section-label">Your ad</div>
+                <div class="ls-section-label">Ваше объявление</div>
                 <div class="ls-listing-row">
                     <img src="https://picsum.photos/seed/car3/160/160" class="ls-listing-thumb" alt="">
                     <div class="ls-listing-meta">
                         <div class="ls-listing-title">Land Rover Range Rover Evoque 2,0L 2017</div>
                         <div class="ls-listing-price">€17.700</div>
-                        <div class="ls-listing-sub">Current photos: 2</div>
+                        <div class="ls-listing-sub">Текущих фото: 2</div>
                     </div>
                     <div class="listing-score-pill grade-average">
                         <div class="lsp-value"><span class="lsp-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M12 19V6M6 12l6-6 6 6" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lsp-num">6.1</span></div>
-                        <div class="lsp-label">Add photos</div>
+                        <div class="lsp-label">Добавьте фото</div>
                     </div>
                 </div>
 
-                <div class="ls-section-label">Add 3 more photos</div>
+                <div class="ls-section-label">Добавьте ещё 3 фото</div>
                 <div class="ls-photo-grid">
                     <button class="ls-photo-tile" onclick="fillPhotoTile(this)"><span>+</span></button>
                     <button class="ls-photo-tile" onclick="fillPhotoTile(this)"><span>+</span></button>
@@ -1043,12 +1043,12 @@
                 </div>
 
                 <div class="ls-tip-card">
-                    <div class="ls-tip-title">Tip</div>
-                    <div class="ls-tip-text">Add photos of the interior, rear view and key details.</div>
+                    <div class="ls-tip-title">Совет</div>
+                    <div class="ls-tip-text">Добавьте фото салона, заднего вида и ключевых деталей.</div>
                 </div>
             </div>
             <div class="ls-bottom-bar">
-                <button class="ls-primary-btn" onclick="applyAddPhoto()">Add photos</button>
+                <button class="ls-primary-btn" onclick="applyAddPhoto()">Добавить фото</button>
             </div>
         </div>
 
@@ -1069,44 +1069,44 @@
                 <div class="paywall-lock">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#FFD66B" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#FFD66B" stroke-width="2"/></svg>
                 </div>
-                <h1 class="paywall-title">Full access to recommendations</h1>
-                <p class="paywall-subtitle">Unlock all recommendations and increase your leads today.</p>
+                <h1 class="paywall-title">Полный доступ к рекомендациям</h1>
+                <p class="paywall-subtitle">Откройте все рекомендации и увеличьте количество лидов уже сегодня.</p>
             </div>
             <div class="paywall-body">
                 <div class="paywall-plan" data-plan="top" onclick="selectPlan('top')">
                     <div class="paywall-plan-left">
                         <div class="paywall-plan-badge top">TOP</div>
                         <div class="paywall-plan-info">
-                            <div class="paywall-plan-name">More views and priority in search</div>
+                            <div class="paywall-plan-name">Больше просмотров и приоритет в поиске</div>
                         </div>
                     </div>
                     <div class="paywall-plan-right">
                         <div class="paywall-plan-price">€17.99</div>
-                        <div class="paywall-plan-period">/30 days</div>
+                        <div class="paywall-plan-period">/30 дней</div>
                     </div>
                 </div>
                 <div class="paywall-plan selected" data-plan="vip" onclick="selectPlan('vip')">
                     <div class="paywall-plan-left">
                         <div class="paywall-plan-badge vip">VIP</div>
                         <div class="paywall-plan-info">
-                            <div class="paywall-plan-name">Maximum views, highlight and all insights</div>
+                            <div class="paywall-plan-name">Максимум просмотров, выделение и все инсайды</div>
                         </div>
                     </div>
                     <div class="paywall-plan-right">
                         <div class="paywall-plan-price">€28.99</div>
-                        <div class="paywall-plan-period">/30 days</div>
+                        <div class="paywall-plan-period">/30 дней</div>
                     </div>
                 </div>
 
                 <ul class="paywall-features">
-                    <li><span class="pf-check">✓</span> Full recommendations for all your ads</li>
-                    <li><span class="pf-check">✓</span> Price analysis and market comparison</li>
-                    <li><span class="pf-check">✓</span> Photo and description tips</li>
-                    <li><span class="pf-check">✓</span> Priority support</li>
+                    <li><span class="pf-check">✓</span> Полные рекомендации по всем объявлениям</li>
+                    <li><span class="pf-check">✓</span> Анализ цены и сравнение с рынком</li>
+                    <li><span class="pf-check">✓</span> Советы по фото и описанию</li>
+                    <li><span class="pf-check">✓</span> Приоритетная поддержка</li>
                 </ul>
             </div>
             <div class="ls-bottom-bar">
-                <button class="ls-primary-btn" id="paywall-buy-btn" onclick="buyAndUnlock()">Unlock with VIP · €28.99</button>
+                <button class="ls-primary-btn" id="paywall-buy-btn" onclick="buyAndUnlock()">Открыть с VIP · €28.99</button>
             </div>
         </div>
     </div>
@@ -1293,6 +1293,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=42"></script>
+    <script src="app.js?v=44"></script>
 </body>
 </html>

@@ -227,7 +227,7 @@
 
 **Цель:** Продавец понимает, почему объявление не получает контактов, и конвертится в VIP/TOP, чтобы открыть рекомендации.
 
-> Реализует spec `2026-q3-listing-score` (Quality+Price → единый Listing Score за VIP/TOP-гейтом). Вариант дизайна — **Variant 1 «Traffic Control Center»** + полный флоу. Тексты на английском (консистентно с остальным прототипом).
+> Реализует spec `2026-q3-listing-score` (Quality+Price → единый Listing Score за VIP/TOP-гейтом). Дизайн карточки приведён к **дизайн-системе** ([Figma node 4283-716](https://www.figma.com/design/a592rafno0osDOPXyzhpQv/Sellers-Cabinets?node-id=4283-716)): тёмная карточка `#18181B` + строка из 3 статов (теряют лиды / можно улучшить / отличных). Тексты Listing Score — на русском, как в макете.
 
 ### Экраны:
 

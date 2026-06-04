@@ -3982,3 +3982,104 @@ html, body {
 }
 .ls-empty-title { font-size: 16px; font-weight: 700; color: #136938; }
 .ls-empty-text { font-size: 13px; color: #626C77; margin-top: 6px; line-height: 18px; }
+
+/* ============================================================
+   Listing Score — dark card (design system, node 4283-716)
+   ============================================================ */
+.listing-score-card {
+    margin: 12px 16px 0;
+    padding: 16px;
+    border: none;
+    border-radius: 16px;
+    background: #18181B;
+    color: #FFFFFF;
+    box-shadow: none;
+}
+.lsc-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+.lsc-brand { font-size: 15px; font-weight: 600; color: #FFFFFF; }
+.lsc-beta {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #A1A1AA;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    padding: 2px 5px;
+}
+.lsc-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+}
+.lsc-body { flex: 1; min-width: 0; }
+.lsc-headline {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 24px;
+    color: #FFFFFF;
+}
+.lsc-potential { font-size: 14px; color: #E4E4E7; margin-top: 8px; }
+.lsc-potential-val { color: #4ADE80; font-weight: 600; }
+.lsc-count { font-size: 14px; color: #A1A1AA; margin-top: 6px; }
+.lsc-cta {
+    width: 100%;
+    height: 48px;
+    margin-top: 16px;
+    border: none;
+    border-radius: 12px;
+    background: #FFFFFF;
+    color: #18181B;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.lsc-cta:active { background: #E4E4E7; }
+.lsc-lock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #A1A1AA;
+}
+.lsc-unlocked {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4ADE80;
+}
+
+/* 3-stat row under the card (on white) */
+.lsc-stat-row {
+    display: flex;
+    margin: 12px 16px 4px;
+}
+.lsc-stat {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+}
+.lsc-stat + .lsc-stat::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 32px;
+    width: 1px;
+    background: #E8E8E8;
+}
+.lsc-stat-num { font-size: 22px; font-weight: 700; line-height: 1; }
+.lsc-stat-num.red { color: #B42525; }
+.lsc-stat-num.amber { color: #C77700; }
+.lsc-stat-num.green { color: #136938; }
+.lsc-stat-label { font-size: 12px; color: #71717A; margin-top: 4px; }
