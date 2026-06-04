@@ -2405,6 +2405,41 @@ const ACCOUNT_FIXES = [
 
 let currentRecFilter = 'all';
 let selectedPlan = 'vip';
+let currentScoreListingId = null;   // null = account-level view, otherwise a specific ad
+
+// Per-listing gate (spec FR-003/FR-004): an ad with active VIP/TOP shows
+// recommendations immediately; otherwise they're behind the paywall.
+// A one-off paywall purchase (scoreUnlocked) unlocks everything for the demo.
+function isScoreUnlocked(listingId) {
+    if (scoreUnlocked) return true;
+    const id = (typeof listingId === 'number') ? listingId : currentScoreListingId;
+    if (id != null) {
+        const l = mockListings.find(x => x.id === id);
+        if (l && (l.hasVip || l.hasTop)) return true;
+    }
+    return false;
+}
+
+function gradeText(grade) {
+    return grade === 'strong' ? 'Excellent' : grade === 'average' ? 'Can be improved' : 'Needs attention';
+}
+
+const PROBLEM = {
+    price: { title: 'Price above market', text: 'Priced above similar ads. Lowering it can bring up to 30% more leads.', go: 'price' },
+    photos: { title: 'Add more photos', text: 'Ads with 5+ photos get up to 2× more leads.', go: 'photo' },
+    description: { title: 'Improve the description', text: 'A complete description increases the chance of contact.', go: 'desc' }
+};
+
+// Fixes relevant to the current context: a single ad's top fix, or the whole account.
+function getContextFixes() {
+    if (currentScoreListingId != null) {
+        const l = mockListings.find(x => x.id === currentScoreListingId);
+        const sc = l ? listingScore(l) : null;
+        if (sc && sc.topFix) return ACCOUNT_FIXES.filter(f => f.key === sc.topFix.key);
+        return [];
+    }
+    return ACCOUNT_FIXES;
+}
 
 // ----- Score ring (SVG donut) -----
 function ringColor(value, max) {
@@ -2458,11 +2493,11 @@ function renderListingScoreCard() {
                 <path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/>
             </svg>
         </div>
-        <button class="lsc-cta" onclick="openRecommendations()">View recommendations</button>
+        <button class="lsc-cta" onclick="openRecommendationsFromCard()">View recommendations</button>
         ${locked
             ? `<div class="lsc-lock">
                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#949494" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#949494" stroke-width="2"/></svg>
-                   Unlock with VIP or TOP
+                   Unlock all ads with VIP or TOP
                </div>`
             : `<div class="lsc-unlocked">✓ Recommendations unlocked</div>`
         }
@@ -2473,7 +2508,8 @@ function renderListingScoreCard() {
 
 // ----- Detail screen -----
 function openListingScore(listingId) {
-    trackInsight('insight_click', { insight_type: 'listing_score', surface: 'my_ads', target: 'detail' });
+    currentScoreListingId = (typeof listingId === 'number') ? listingId : null;
+    trackInsight('insight_click', { insight_type: 'listing_score', surface: 'my_ads', target: 'detail', advert_id: currentScoreListingId });
     navigateTo('screen-listing-score');
     renderListingScoreDetail();
 }
@@ -2481,71 +2517,108 @@ function openListingScore(listingId) {
 function renderListingScoreDetail() {
     const body = document.getElementById('listing-score-detail-body');
     if (!body) return;
-    const agg = aggregateScore();
-    const locked = !scoreUnlocked;
+    const listing = currentScoreListingId != null ? mockListings.find(l => l.id === currentScoreListingId) : null;
+    const locked = !isScoreUnlocked(currentScoreListingId);
 
-    const quickWins = locked
-        ? `
-        <div class="ls-locked-list">
-            <div class="ls-locked-row">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#949494" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#949494" stroke-width="2"/></svg>
-                <div><div class="ls-locked-title">Optimize price</div><div class="ls-locked-sub">Set the price for maximum leads</div></div>
-            </div>
-            <div class="ls-locked-row">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#949494" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#949494" stroke-width="2"/></svg>
-                <div><div class="ls-locked-title">Add photos &amp; improve description</div><div class="ls-locked-sub">+20% contact rate on average</div></div>
-            </div>
-            <button class="ls-primary-btn" onclick="openPaywall()">Unlock with VIP / TOP</button>
-        </div>`
-        : `
-        <div class="ls-win-list">
-            ${ACCOUNT_FIXES.slice(1).map(f => `
-                <div class="ls-win-row" onclick="goFix('${f.go}')">
-                    <div class="ls-win-info"><div class="ls-win-title">${f.title}</div><div class="ls-win-uplift">${f.uplift} leads</div></div>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/></svg>
-                </div>`).join('')}
-            <button class="ls-primary-btn" onclick="openRecommendations()">View all recommendations</button>
-        </div>`;
+    let ringVal, heroTitle, heroSub, problemKey, statA, statB, vasNote = '';
+    if (listing) {
+        const sc = listingScore(listing);
+        ringVal = Math.round(sc.value * 10);
+        heroTitle = listing.title;
+        heroSub = `<span class="ls-grade ${sc.grade}">${gradeText(sc.grade)}</span> · ${listing.priceDisplay}`;
+        problemKey = sc.topFix ? sc.topFix.key : null;
+        if (problemKey) {
+            statA = { v: sc.topFix.uplift, l: 'more leads potential', green: true };
+            statB = { v: '1', l: 'fix to apply' };
+        } else {
+            statA = { v: 'Top 10%', l: 'in your category', green: true };
+            statB = { v: '0', l: 'issues found' };
+        }
+        // Reassure VIP/TOP owners why their recommendations are already open.
+        if (!locked && (listing.hasVip || listing.hasTop)) {
+            vasNote = `<div class="ls-vas-note">✓ ${listing.hasVip ? 'VIP' : 'TOP'} active — recommendations are open for this ad</div>`;
+        }
+    } else {
+        const agg = aggregateScore();
+        ringVal = agg.score;
+        heroTitle = 'Average across your ads';
+        heroSub = '<span class="ls-trend-down">▼ −12 in the last 7 days</span>';
+        problemKey = 'price';
+        statA = { v: '+28%', l: 'more leads potential', green: true };
+        statB = { v: String(agg.needAttention), l: 'ads need attention' };
+    }
+
+    const problemBlock = problemKey
+        ? `<div class="ls-section-label">Main problem</div>
+           <div class="ls-problem-card" onclick="${locked ? 'openPaywall()' : `goFix('${PROBLEM[problemKey].go}')`}">
+               <div class="ls-problem-icon">
+                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#B42525" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+               </div>
+               <div class="ls-problem-body">
+                   <div class="ls-problem-title">${PROBLEM[problemKey].title}</div>
+                   <div class="ls-problem-text">${PROBLEM[problemKey].text}</div>
+               </div>
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/></svg>
+           </div>`
+        : `<div class="ls-positive-card">
+               <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="#136938" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+               <div><div class="ls-problem-title">This ad is in great shape</div><div class="ls-problem-text">No action needed — it's performing well.</div></div>
+           </div>`;
+
+    let actions = '';
+    if (problemKey) {
+        actions = locked
+            ? `<div class="ls-section-label">Quick wins <span class="ls-lock-hint">unlock with VIP/TOP</span></div>
+               <div class="ls-locked-list">
+                   <div class="ls-locked-row">
+                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#949494" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#949494" stroke-width="2"/></svg>
+                       <div><div class="ls-locked-title">${PROBLEM[problemKey].title}</div><div class="ls-locked-sub">See the exact fix and its impact</div></div>
+                   </div>
+                   <button class="ls-primary-btn" onclick="openPaywall()">Unlock with VIP / TOP</button>
+               </div>`
+            : `<div class="ls-section-label">Quick wins</div>
+               <div class="ls-win-list">
+                   <button class="ls-primary-btn" onclick="openRecommendations()">View recommendations</button>
+               </div>`;
+    }
 
     body.innerHTML = `
         <div class="ls-hero">
-            ${scoreRingSvg(agg.score, 100, { size: 96 })}
+            ${scoreRingSvg(ringVal, 100, { size: 96 })}
             <div class="ls-hero-meta">
-                <div class="ls-hero-title">Average across your ads</div>
-                <div class="ls-hero-trend down">▼ −12 in the last 7 days</div>
+                <div class="ls-hero-title">${heroTitle}</div>
+                <div class="ls-hero-sub">${heroSub}</div>
             </div>
         </div>
+        ${vasNote}
         <div class="ls-stat-row">
             <div class="ls-stat">
-                <div class="ls-stat-value green">+28%</div>
-                <div class="ls-stat-label">more leads potential</div>
+                <div class="ls-stat-value ${statA.green ? 'green' : ''}">${statA.v}</div>
+                <div class="ls-stat-label">${statA.l}</div>
             </div>
             <div class="ls-stat">
-                <div class="ls-stat-value">${agg.needAttention}</div>
-                <div class="ls-stat-label">ads need attention</div>
+                <div class="ls-stat-value">${statB.v}</div>
+                <div class="ls-stat-label">${statB.l}</div>
             </div>
         </div>
-        <div class="ls-section-label">Main problem</div>
-        <div class="ls-problem-card" onclick="${locked ? 'openPaywall()' : 'openPriceComparison()'}">
-            <div class="ls-problem-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#B42525" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="ls-problem-body">
-                <div class="ls-problem-title">Price above market</div>
-                <div class="ls-problem-text">Your ad is priced 15–20% above market. This can cut leads by up to 30%.</div>
-            </div>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="#949494" stroke-width="2"/></svg>
-        </div>
-        <div class="ls-section-label">Quick wins ${locked ? '<span class="ls-lock-hint">unlock all with VIP/TOP</span>' : ''}</div>
-        ${quickWins}`;
+        ${problemBlock}
+        ${actions}`;
 }
 
 // ----- Recommendations screen -----
 function openRecommendations() {
-    trackInsight('insight_click', { insight_type: 'listing_score', target: 'recommendations' });
-    if (!scoreUnlocked) { openPaywall(); return; }
+    trackInsight('insight_click', { insight_type: 'listing_score', target: 'recommendations', advert_id: currentScoreListingId });
+    if (!isScoreUnlocked(currentScoreListingId)) { openPaywall(); return; }
+    currentRecFilter = 'all';
+    document.querySelectorAll('#rec-tabs .ls-tab').forEach(t => t.classList.toggle('active', t.dataset.filter === 'all'));
     navigateTo('screen-score-recommendations');
     renderRecommendationsList();
+}
+
+// Opened from the account-level aggregate card (resets per-listing context).
+function openRecommendationsFromCard() {
+    currentScoreListingId = null;
+    openRecommendations();
 }
 
 function filterRecommendations(filter) {
@@ -2559,7 +2632,23 @@ function filterRecommendations(filter) {
 function renderRecommendationsList() {
     const body = document.getElementById('recommendations-body');
     if (!body) return;
-    const fixes = ACCOUNT_FIXES.filter(f => currentRecFilter === 'all' || f.severity === currentRecFilter);
+
+    const all = getContextFixes();
+    // Keep tab badges in sync with the current context (account vs single ad).
+    const setBadge = (sel, n) => { const e = document.querySelector(sel); if (e) e.textContent = n; };
+    setBadge('#rec-tabs .ls-tab[data-filter="all"] .ls-tab-badge', all.length);
+    setBadge('#rec-tabs .ls-tab[data-filter="critical"] .ls-tab-badge', all.filter(f => f.severity === 'critical').length);
+    setBadge('#rec-tabs .ls-tab[data-filter="quick"] .ls-tab-badge', all.filter(f => f.severity === 'quick').length);
+
+    const fixes = all.filter(f => currentRecFilter === 'all' || f.severity === currentRecFilter);
+    if (fixes.length === 0) {
+        body.innerHTML = `
+            <div class="ls-empty">
+                <div class="ls-empty-title">No recommendations</div>
+                <div class="ls-empty-text">This ad is performing well — nothing to improve right now.</div>
+            </div>`;
+        return;
+    }
     body.innerHTML = fixes.map(f => `
         <div class="ls-reco-card">
             <div class="ls-reco-tag ${f.severity}">${f.severity === 'critical' ? 'CRITICAL' : 'QUICK WIN'}</div>
@@ -2586,8 +2675,8 @@ function goFix(go) {
 
 // ----- Price comparison -----
 function openPriceComparison() {
-    if (!scoreUnlocked) { openPaywall(); return; }
-    trackInsight('insight_click', { fix_key: 'price', target: 'price_comparison' });
+    if (!isScoreUnlocked(currentScoreListingId)) { openPaywall(); return; }
+    trackInsight('insight_click', { fix_key: 'price', target: 'price_comparison', advert_id: currentScoreListingId });
     navigateTo('screen-price-comparison');
 }
 
@@ -2614,8 +2703,8 @@ function applyPriceChange() {
 
 // ----- Add photos -----
 function openAddPhoto() {
-    if (!scoreUnlocked) { openPaywall(); return; }
-    trackInsight('insight_click', { fix_key: 'photos', target: 'add_photo' });
+    if (!isScoreUnlocked(currentScoreListingId)) { openPaywall(); return; }
+    trackInsight('insight_click', { fix_key: 'photos', target: 'add_photo', advert_id: currentScoreListingId });
     navigateTo('screen-add-photo');
 }
 
