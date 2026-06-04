@@ -95,8 +95,16 @@ function listingScore(listing) {
     }
     const grade = scoreGrade(value);
     const topFix = fixKey ? FIX_CATALOG[fixKey] : null;
-    const label = topFix ? topFix.label : 'Excellent';
+    const DESC = { price: 'Price above market', photos: 'Add photos', description: 'Improve description' };
+    const label = fixKey ? DESC[fixKey] : 'Excellent ad';
     return { value, grade, label, topFix };
+}
+
+// Small white glyph inside the score badge, by grade.
+function lspBadgeIcon(grade) {
+    if (grade === 'strong') return '<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    if (grade === 'weak') return '<svg viewBox="0 0 24 24" fill="none"><path d="M12 7v6" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="12" cy="17.5" r="1.6" fill="#fff"/></svg>';
+    return '<svg viewBox="0 0 24 24" fill="none"><path d="M12 19V6M6 12l6-6 6 6" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 }
 
 // Aggregate account score (0–100) = avg per-listing value × 10, over active ads.
@@ -1461,7 +1469,10 @@ function renderListings(containerId, listings) {
         const sc = listingScore(listing);
         const scorePillHtml = `
             <div class="listing-score-pill grade-${sc.grade}" onclick="event.stopPropagation(); openListingScore(${listing.id})">
-                <div class="lsp-value"><span class="lsp-dot"></span>${sc.value.toFixed(1)}</div>
+                <div class="lsp-value">
+                    <span class="lsp-badge">${lspBadgeIcon(sc.grade)}</span>
+                    <span class="lsp-num">${sc.value.toFixed(1)}</span>
+                </div>
                 <div class="lsp-label">${sc.label}</div>
             </div>`;
 
@@ -1475,7 +1486,8 @@ function renderListings(containerId, listings) {
         ` : '';
 
         return `
-        <div class="listing-card" data-id="${listing.id}">
+        <div class="listing-card grade-${sc.grade}" data-id="${listing.id}">
+            <span class="listing-card-bar"></span>
             <div class="listing-checkbox">
                 <input type="checkbox" class="checkbox listing-check" data-id="${listing.id}" ${state.selectedListings.has(listing.id) ? 'checked' : ''}>
             </div>

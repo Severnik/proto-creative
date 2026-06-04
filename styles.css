@@ -3372,51 +3372,63 @@ html, body {
     vertical-align: middle;
 }
 
-/* ----- Per-listing score pill ----- */
+/* ----- Heatmap left stripe on listing cards ----- */
+.listing-card { position: relative; }
+.listing-card-bar {
+    position: absolute;
+    left: 0;
+    top: 14px;
+    bottom: 14px;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+}
+.listing-card.grade-weak    .listing-card-bar { background: #B42525; }
+.listing-card.grade-average .listing-card-bar { background: #E59500; }
+.listing-card.grade-strong  .listing-card-bar { background: #136938; }
+
+/* ----- Per-listing score pill (badge + number + descriptive label) ----- */
 .listing-score-pill {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    min-width: 56px;
-    padding: 6px 8px;
-    border-radius: 10px;
+    align-items: flex-end;
+    gap: 3px;
+    min-width: 76px;
+    max-width: 100px;
     align-self: flex-start;
     cursor: pointer;
-    background: #F7F8FA;
 }
 .listing-score-pill .lsp-value {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 16px;
+    gap: 5px;
+    font-size: 17px;
     font-weight: 700;
     line-height: 1;
 }
-.listing-score-pill .lsp-dot {
-    width: 7px;
-    height: 7px;
+.listing-score-pill .lsp-badge {
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
+.listing-score-pill .lsp-badge svg { width: 12px; height: 12px; }
 .listing-score-pill .lsp-label {
     font-size: 11px;
-    font-weight: 500;
-    color: #626C77;
-    white-space: nowrap;
+    font-weight: 600;
+    text-align: right;
+    line-height: 1.25;
 }
-.listing-score-pill.grade-weak    { background: #FDECEC; }
-.listing-score-pill.grade-weak    .lsp-value { color: #B42525; }
-.listing-score-pill.grade-weak    .lsp-dot   { background: #B42525; }
+.listing-score-pill.grade-weak    .lsp-num   { color: #B42525; }
+.listing-score-pill.grade-weak    .lsp-badge { background: #B42525; }
 .listing-score-pill.grade-weak    .lsp-label { color: #B42525; }
-.listing-score-pill.grade-average { background: #FEF3C7; }
-.listing-score-pill.grade-average .lsp-value { color: #B5790B; }
-.listing-score-pill.grade-average .lsp-dot   { background: #E59500; }
-.listing-score-pill.grade-average .lsp-label { color: #92700E; }
-.listing-score-pill.grade-strong  { background: #E8F5E9; }
-.listing-score-pill.grade-strong  .lsp-value { color: #136938; }
-.listing-score-pill.grade-strong  .lsp-dot   { background: #136938; }
+.listing-score-pill.grade-average .lsp-num   { color: #C77700; }
+.listing-score-pill.grade-average .lsp-badge { background: #E59500; }
+.listing-score-pill.grade-average .lsp-label { color: #B5790B; }
+.listing-score-pill.grade-strong  .lsp-num   { color: #136938; }
+.listing-score-pill.grade-strong  .lsp-badge { background: #136938; }
 .listing-score-pill.grade-strong  .lsp-label { color: #136938; }
 
 /* ----- Aggregate Listing Score card on My ads ----- */
